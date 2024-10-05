@@ -1,0 +1,7 @@
+#threejs-container {
+    display: none;
+    /* Initially hidden until loading is complete */
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+}
