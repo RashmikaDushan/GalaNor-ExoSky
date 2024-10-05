@@ -11,6 +11,8 @@ CORS(app)
 # Path to your CSV file
 CSV_FILE_PATH = './data/Planets.csv'
 exoplanets_table = None
+# Scale the distance
+distance_scaler = 10
 
 
 # Function to read the csv
@@ -61,6 +63,7 @@ def generate_query(index,view_distance):
 
 def get_exo_stars(index,view_distance):
     global exoplanets_table
+    global distance_scaler
     query = generate_query(index,view_distance)
     # Launch async job
     job = Gaia.launch_job_async(query)
@@ -73,9 +76,6 @@ def get_exo_stars(index,view_distance):
     ra = np.radians(results["ra"])  # Convert to radians
     dec = np.radians(results["dec"])  # Convert to radians
     distance_gspphot = results["distance_gspphot"]
-
-    # Scale the distance
-    distance_scaler = 10
 
     # Calculate x, y, z coordinates from ra dec distance_gspphot
     x = distance_gspphot * np.cos(dec) * np.cos(ra) * distance_scaler
@@ -141,6 +141,49 @@ def submit():
         return f"Invalid request: Missing {e}", 400
     except Exception as e:
         return f"Error: {e}", 500
+    
+
+@app.route('/load_csv', methods=['GET'])
+def load_csv():
+        global exoplanets_table
+        global distance_scaler
+        try:
+            if exoplanets_table is None:
+                read_csv()
+            
+            if exoplanets_table is None:
+                print("Table not found")
+                return "Table not found", 404
+            
+            if exoplanets_table.empty:
+                print("CSV is empty or not found")
+                return "CSV is empty", 404
+            
+            # Get relevant columns
+            ra = np.radians(exoplanets_table["ra"])  # Convert to radians
+            dec = np.radians(exoplanets_table["dec"])  # Convert to radians
+            sy_dist = exoplanets_table["sy_dist"]
+
+            # Calculate x, y, z coordinates from ra dec distance_gspphot
+            x = sy_dist * np.cos(dec) * np.cos(ra) * distance_scaler
+            y = sy_dist * np.sin(dec) * distance_scaler
+            z = sy_dist * np.cos(dec) * np.sin(ra) * distance_scaler
+        
+            sliced_exoplanets_table = exoplanets_table.drop(columns=["ra", "dec", "sy_dist"], inplace=False)
+
+            # Add new x, y, z columns to the DataFrame
+            sliced_exoplanets_table["x"] = x
+            sliced_exoplanets_table["y"] = y
+            sliced_exoplanets_table["z"] = z
+
+            print(sliced_exoplanets_table)
+
+            return sliced_exoplanets_table.to_json()
+
+        except KeyError as e:
+            return f"Invalid request: Missing {e}", 400
+        except Exception as e:
+            return f"Error: {e}", 500
 
 if __name__ == "__main__":
     app.run(debug=True)
