@@ -1,0 +1,11 @@
+.overlay-title {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 4rem;
+    font-weight: bold;
+    color: white;
+    transition: opacity 0.5s ease;
+  }
+  

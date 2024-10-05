@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import EarthCanvas from '../components/EarthCanvas';
-// import Sidebar from '../components/Sidebar';
-// import Button from '../components/Button';
-// import OverlayTitle from '../components/OverlayTitle';
+import Sidebar from '../components/SideBar';
+import Button from '../components/Button';
+import OverlayTitle from '../components/OverlayTitle';
 import '../style/HomePage.css'; // Ensure to have HomePage styles here
 
 const HomePage = () => {
@@ -24,11 +24,10 @@ const HomePage = () => {
   return (
     <div className="homePage"> 
       <EarthCanvas toggleSidebar={toggleSidebar} handleZoom={handleZoom} />
-            {/* 
       <OverlayTitle isVisible={isOverlayVisible} />
       <Sidebar isVisible={isSidebarVisible} />
       <Button />
-      */}
+      
     </div>
   );
 };
