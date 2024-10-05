@@ -8,7 +8,7 @@
     box-shadow: -2px 0px 10px rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.3);
     color: #ffffff;
-    padding: 20px;
+    padding: 20px 20px 20px 40px;
     position: fixed;
     top: 0;
     left: -100vw;
@@ -23,3 +23,15 @@
     left: 0;
   }
   
+h2{
+    font-family: "Roboto", sans-serif;
+    font-weight: 400;
+}
+
+b{
+    color: aqua;
+}
+
+p{
+    text-align: justify;
+}

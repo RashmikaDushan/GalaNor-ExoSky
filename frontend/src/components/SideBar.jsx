@@ -4,8 +4,9 @@ import '../style/SideBar.css'; // Ensure to have Sidebar styles here
 const Sidebar = ({ isVisible }) => {
   return (
     <div className={`card ${isVisible ? 'visible' : ''}`}>
-      <h2>Information Card</h2>
-      <p>This is a card on the right side of the screen. You can put any content here.</p>
+      <h2>What is Exo Planet</h2>
+      <p>An exoplanet is a planet that is outside <b>our solar system.</b> Exoplanets are typically found orbiting a star other than our Sun. 
+        In the same way that our solar system contains eight planets, other stars can have many exoplanets in orbit around them.</p>
     </div>
   );
 };

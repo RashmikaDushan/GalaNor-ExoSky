@@ -1,118 +1,152 @@
+import React, { useRef, useEffect, useMemo, useCallback } from 'react';
 import * as THREE from 'three';
-import { useRef, useEffect } from 'react';
+import { gsap } from 'gsap';
 
-const EarthCanvas = () => {
+const EarthCanvas = ({ toggleSidebar, handleZoom }) => {
   const canvasRef = useRef(null);
-  let isSpaceView = true; // Start in space view
+  const sceneRef = useRef(null);
+  const cameraRef = useRef(null);
+  const rendererRef = useRef(null);
+  const earthMeshRef = useRef(null);
+  const cloudMeshRef = useRef(null);
+  const starMeshRef = useRef(null);
+  const isSpaceViewRef = useRef(true);
+  const mouseRef = useRef(new THREE.Vector2());
+  const raycasterRef = useRef(new THREE.Raycaster());
+
+  const createScene = useCallback(() => {
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 10;
+
+    const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearColor(0x000000, 0.0);
+
+    sceneRef.current = scene;
+    cameraRef.current = camera;
+    rendererRef.current = renderer;
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+    const pointLight = new THREE.PointLight(0xffffff, 1);
+    pointLight.position.set(5, 3, 5);
+    scene.add(pointLight);
+
+    // Earth
+    const earthGeometry = new THREE.SphereGeometry(0.6, 32, 32);
+    const earthMaterial = new THREE.MeshPhongMaterial({
+      // map: new THREE.TextureLoader().load('src/assets/earthmap1k.jpg'),
+      // bumpMap: new THREE.TextureLoader().load('src/assets/earthbump.jpg'),
+      color:0x0000ff,
+      bumpScale: 0.1,
+    });
+    const earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
+    scene.add(earthMesh);
+    earthMeshRef.current = earthMesh;
+
+    // Cloud
+    const cloudGeometry = new THREE.SphereGeometry(0.63, 32, 32);
+    const cloudMaterial = new THREE.MeshPhongMaterial({
+      // map: new THREE.TextureLoader().load('src/assets/earthCloud.png'),
+      color:0xff0000,
+      transparent: true,
+      opacity: 0.8,
+    });
+    const cloudMesh = new THREE.Mesh(cloudGeometry, cloudMaterial);
+    scene.add(cloudMesh);
+    cloudMeshRef.current = cloudMesh;
+
+    // Stars
+    const starGeometry = new THREE.SphereGeometry(40, 64, 64);
+    const starMaterial = new THREE.MeshBasicMaterial({
+      // map: new THREE.TextureLoader().load('src/assets/galaxy.png'),
+      color:0x00ff00,
+      side: THREE.BackSide,
+    });
+    const starMesh = new THREE.Mesh(starGeometry, starMaterial);
+    scene.add(starMesh);
+    starMeshRef.current = starMesh;
+  }, []);
+
+  const handleResize = useCallback(() => {
+    if (cameraRef.current && rendererRef.current) {
+      cameraRef.current.aspect = window.innerWidth / window.innerHeight;
+      cameraRef.current.updateProjectionMatrix();
+      rendererRef.current.setSize(window.innerWidth, window.innerHeight);
+    }
+  }, []);
+
+  const handleMouseMove = useCallback((event) => {
+    mouseRef.current.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouseRef.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  }, []);
+
+  const handleClick = useCallback(() => {
+    if (earthMeshRef.current && cameraRef.current) {
+      raycasterRef.current.setFromCamera(mouseRef.current, cameraRef.current);
+      const intersects = raycasterRef.current.intersectObject(earthMeshRef.current);
+
+      if (intersects.length > 0) {
+        isSpaceViewRef.current = !isSpaceViewRef.current;
+        const targetZ = isSpaceViewRef.current ? 10 : 2;
+
+        gsap.to(cameraRef.current.position, {
+          z: targetZ,
+          duration: 1,
+          ease: "power2.inOut",
+          onUpdate: () => handleZoom(cameraRef.current.position.z),
+          onComplete: toggleSidebar
+        });
+      }
+    }
+  }, [toggleSidebar, handleZoom]);
+
+  const animate = useCallback(() => {
+    if (earthMeshRef.current && cloudMeshRef.current && starMeshRef.current && cameraRef.current && rendererRef.current && sceneRef.current) {
+      earthMeshRef.current.rotation.y += 0.001;
+      cloudMeshRef.current.rotation.y += 0.0015;
+      starMeshRef.current.rotation.y += 0.0005;
+
+      cameraRef.current.lookAt(sceneRef.current.position);
+      rendererRef.current.render(sceneRef.current, cameraRef.current);
+    }
+    requestAnimationFrame(animate);
+  }, []);
 
   useEffect(() => {
-    let scene, camera, renderer, earthMesh, cloudMesh, starMesh;
-    let mouse = new THREE.Vector2();
-    const raycaster = new THREE.Raycaster();
+    createScene();
+    animate();
 
-    function main() {
-      const canvas = canvasRef.current;
+    window.addEventListener('resize', handleResize);
+    canvasRef.current.addEventListener('mousemove', handleMouseMove);
+    canvasRef.current.addEventListener('click', handleClick);
 
-      // Scene setup
-      scene = new THREE.Scene();
-      camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.z = 10; // Start out view
-
-      renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setPixelRatio(window.devicePixelRatio);
-      renderer.setClearColor(0x000000, 0.0);
-
-      // Create Earth geometry
-      const earthGeometry = new THREE.SphereGeometry(0.6, 32, 32);
-      const earthMaterial = new THREE.MeshPhongMaterial({
-        map: new THREE.TextureLoader().load('src/assets/earthmap1k.jpg'),
-        bumpMap: new THREE.TextureLoader().load('src/assets/earthbump.jpg'),
-        bumpScale: 0.5,
-      });
-
-      earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
-      scene.add(earthMesh);
-
-      // Lighting
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
-      scene.add(ambientLight);
-      const pointLight = new THREE.PointLight(0xffffff, 0.9);
-      pointLight.position.set(5, 3, 5);
-      scene.add(pointLight);
-
-      // Cloud
-      const cloudGeometry = new THREE.SphereGeometry(0.63, 32, 32);
-      const cloudMaterial = new THREE.MeshPhongMaterial({
-        map: new THREE.TextureLoader().load('src/assets/earthCloud.png'),
-        transparent: true,
-      });
-
-      cloudMesh = new THREE.Mesh(cloudGeometry, cloudMaterial);
-      scene.add(cloudMesh);
-
-      // Star background
-      const starGeometry = new THREE.SphereGeometry(40, 16, 16);
-      const starMaterial = new THREE.MeshBasicMaterial({
-        map: new THREE.TextureLoader().load('src/assets/galaxy.jpg'),
-        side: THREE.BackSide,
-      });
-
-      starMesh = new THREE.Mesh(starGeometry, starMaterial);
-      scene.add(starMesh);
-
-      // Mouse move event listener
-      document.addEventListener('mousemove', (event) => {
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-      });
-
-      // Click event on canvas
-      canvas.addEventListener('click', () => {
-        raycaster.setFromCamera(mouse, camera);
-        const intersects = raycaster.intersectObjects([earthMesh]);
-
-        if (intersects.length > 0) {
-          isSpaceView = !isSpaceView;
-
-          if (isSpaceView) {
-            // Zoom out to space view
-            gsap.to(camera.position, { z: 10, duration: 1, ease: "power2.inOut" });
-          } else {
-            // Zoom in to Earth view
-            gsap.to(camera.position, { z: 2, duration: 1, ease: "power2.inOut" });
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      canvasRef.current.removeEventListener('mousemove', handleMouseMove);
+      canvasRef.current.removeEventListener('click', handleClick);
+      
+      // Dispose of Three.js objects
+      if (sceneRef.current) {
+        sceneRef.current.traverse((object) => {
+          if (object.geometry) object.geometry.dispose();
+          if (object.material) {
+            if (Array.isArray(object.material)) {
+              object.material.forEach(material => material.dispose());
+            } else {
+              object.material.dispose();
+            }
           }
-        }
-      });
-
-      // Handle window resize
-      window.addEventListener('resize', () => {
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-
-        renderer.setSize(width, height);
-        renderer.setPixelRatio(window.devicePixelRatio);
-
-        camera.aspect = width / height;
-        camera.updateProjectionMatrix();
-      });
-
-      const animate = () => {
-        requestAnimationFrame(animate);
-        earthMesh.rotation.y += 0.0015;
-        cloudMesh.rotation.y += 0.0015;
-        starMesh.rotation.y += 0.0015; // Rotate star background
-        camera.lookAt(scene.position);
-        renderer.render(scene, camera);
-      };
-
-      animate();
-    }
-
-    main();
-  }, []);
+        });
+      }
+      if (rendererRef.current) rendererRef.current.dispose();
+    };
+  }, [createScene, animate, handleResize, handleMouseMove, handleClick]);
 
   return <canvas ref={canvasRef} />;
 };
 
-export default EarthCanvas;
+export default React.memo(EarthCanvas);

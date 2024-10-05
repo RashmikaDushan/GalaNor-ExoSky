@@ -3,7 +3,8 @@ import EarthCanvas from '../components/EarthCanvas';
 import Sidebar from '../components/SideBar';
 import Button from '../components/Button';
 import OverlayTitle from '../components/OverlayTitle';
-import '../style/HomePage.css'; // Ensure to have HomePage styles here
+// import NewCanvas from '../components/NewCanvas';
+import '../style/HomePage.css';
 
 const HomePage = () => {
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
@@ -27,7 +28,8 @@ const HomePage = () => {
       <OverlayTitle isVisible={isOverlayVisible} />
       <Sidebar isVisible={isSidebarVisible} />
       <Button />
-      
+
+      {/* <NewCanvas /> */}
     </div>
   );
 };
