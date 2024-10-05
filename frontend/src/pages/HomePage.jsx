@@ -15,11 +15,7 @@ const HomePage = () => {
   };
 
   const handleZoom = (zoomLevel) => {
-    if (zoomLevel < 6) {
-      setIsOverlayVisible(false);
-    } else {
-      setIsOverlayVisible(true);
-    }
+    setIsOverlayVisible(zoomLevel > 6);
   };
 
   return (
@@ -28,8 +24,6 @@ const HomePage = () => {
       <OverlayTitle isVisible={isOverlayVisible} />
       <Sidebar isVisible={isSidebarVisible} />
       <Button />
-
-      {/* <NewCanvas /> */}
     </div>
   );
 };
