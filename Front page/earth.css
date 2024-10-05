@@ -1,0 +1,123 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    overflow: hidden; /* Prevents scrolling */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100vh;
+}
+
+canvas {
+    display: block; /* Removes the inline space below the canvas */
+    width: 100vw;  /* Full width */
+    height: 100vh; /* Full height */
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* Card Style - Glassmorphism */
+.card {
+    width: 30vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.2); /* Transparent background */
+    backdrop-filter: blur(10px); /* Apply blur effect */
+    -webkit-backdrop-filter: blur(10px); /* Safari support */
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); /* Softer shadow */
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Light border */
+    color: #000000;
+    padding: 20px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.button {
+    position: absolute;
+    bottom: 20; /* Fixed to the bottom of the viewport */
+    right: 30px;
+    transform: translateX(-50%); /* Center the button */
+    padding: 10px 20px; /* Increased padding for better text fit */
+    font-size: 20px; /* Adjusted font size */
+    background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent background */
+    color: #ffffff; /* White text */
+    border: 2px solid rgba(255, 255, 255, 0.5); /* Border with transparency */
+    border-radius: 30px; /* Rounded corners */
+    text-transform: uppercase; /* Uppercase text */
+    letter-spacing: 1px; /* Spacing between letters */
+    cursor: pointer;
+    font-size: 16px;
+    z-index: 1; /* Make sure it's above the canvas */
+    transition: background 0.3s, border-color 0.3s; /* Smooth transition */
+    /*backdrop-filter: blur(5px); /* Frosted glass effect */
+    width: 250px; /* Button width */
+    height: auto; /* Let height adjust based on content */
+}
+
+
+.button:hover {
+    background-color: rgba(255, 255, 255, 0.5); /* Change background on hover */
+    border-color: rgba(255, 255, 255, 1); /* Solid border on hover */
+}
+
+.button:focus {
+    outline: none; /* Remove outline on focus */
+}
+
+.crash {
+    animation: crashAnimation 0.5s forwards; /* Apply crash animation */
+}
+
+@keyframes crashAnimation {
+    0% { transform: translateY(0); } /* Starting position */
+    70% { transform: translateY(20px); opacity: 1; } /* Move down slowly */
+    100% { transform: translateY(-200px) scale(0); opacity: 0; } /* Move up quickly */
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .button {
+        font-size: 18px; /* Smaller font size for mobile */
+        padding: 15px 30px; /* Smaller padding for mobile */
+        width: 220px; /* Adjusted width for mobile */
+        height: auto; /* Let height adjust based on content */
+    }
+}
+
+.overlay-title {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 4rem;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+    opacity: 1;
+    transition: opacity 1s ease-in-out;
+  }
+
+/* Hidden Sidebar (Initial state) */
+.card.hidden {
+    transform: translateX(100%); /* Off-screen (right) */
+    transition: transform 0.5s ease; /* Smooth sliding */
+}
+
+/* Visible Sidebar */
+.card.visible {
+    transform: translateX(0); /* Slide into view */
+    transition: transform 0.5s ease; /* Smooth sliding */
+}
