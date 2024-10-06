@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
-import '../style/SideBar.css'; // Make sure the path is correct for your project structure
+import React, { useState, useEffect, useRef } from 'react';
+import '../style/SideBar.css'; // Ensure the path is correct for your project structure
+import audioFile from '../assets/sidebar-audio.mp3'; // Adjust the path as needed
 
 const Sidebar = ({ isVisible }) => {
   // State to track which content is active
   const [activeContent, setActiveContent] = useState('exoplanet');
+  const audioRef = useRef(null);
 
   // Function to render content based on the active section
   const renderContent = () => {
@@ -58,6 +60,16 @@ const Sidebar = ({ isVisible }) => {
     }
   };
 
+  // Effect to play/pause audio based on visibility
+  useEffect(() => {
+    if (isVisible && audioRef.current) {
+      audioRef.current.play();
+    } else if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0; // Reset audio to start
+    }
+  }, [isVisible]);
+
   return (
     <div className={`card ${isVisible ? 'visible' : ''}`}>
       <h1>Welcome to Title!</h1>
@@ -76,6 +88,9 @@ const Sidebar = ({ isVisible }) => {
       <div className="content">
         {renderContent()}
       </div>
+
+      {/* Hidden audio element with loop attribute */}
+      <audio ref={audioRef} src={audioFile} loop />
     </div>
   );
 };
