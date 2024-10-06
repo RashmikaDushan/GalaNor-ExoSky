@@ -12,7 +12,7 @@ CORS(app)
 CSV_FILE_PATH = './data/Planets.csv'
 exoplanets_table = None
 # Scale the distance
-distance_scaler = 100
+distance_scaler = 5
 
 
 # Function to read the csv
@@ -47,7 +47,7 @@ def generate_query(index,view_distance):
             WHERE distance_gspphot < {far};
                 """
         else:
-            angle = np.arctan(view_distance/(sy_dist))
+            angle = (np.arctan(view_distance/(sy_dist)))*180/np.pi
             query = f"""
             SELECT ra,dec,distance_gspphot
             FROM gaiadr3.gaia_source
