@@ -82,10 +82,30 @@ The webapp enhances educational engagement by helping students understand astron
   </tr>
   <tr>
     <td><strong>Software</strong></td>
-    <td colspan="3">Visual Studio Code, Jupyter Notebook, MS 365</td>
+    <td colspan="3">Visual Studio Code, Jupyter Notebook, MS 365</td>   
   </tr>
   <tr>
     <td><strong>Hardware</strong></td>
     <td colspan="3">Laptops</td>
   </tr>
 </table>
+
+## Additional Information
+
+### Exoplanetary Celestial Sphere Volume Identification
+
+![Exoplanetary Celestial Sphere Volume Identification](https://github.com/RashmikaDushan/GalaNor-ExoSky/blob/documentation/Images/Screenshot%202024-10-06%20084618.png)
+
+### Key Scenarios for Data Filtering in Star Map Generation
+
+Main three scenarios shall be considered by the backend when filtering the data to generate the star map as per the request comes from the frontend.
+
+**Scenario 01**
+Sky view from the Earth (Celestial Sphere of Earth)
+
+**Scenario 02**
+Earth within the Explanatory Celestial Sphere
+
+**Scenario 03**
+Earth within the Explanatory Celestial Sphere
+
