@@ -122,5 +122,5 @@ Earth within the Explanatory Celestial Sphere
 
 Activity Diagram
 
-![Activity Diagram](https://github.com/RashmikaDushan/GalaNor-ExoSky/blob/documentation/Images/Screenshot%202024-10-06%20084618.png)
+![Activity Diagram](https://github.com/RashmikaDushan/GalaNor-ExoSky/blob/documentation/Images/Nasa%20Space%20Apps%20Challenge%203.png)
 
