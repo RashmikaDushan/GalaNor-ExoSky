@@ -120,3 +120,7 @@ Earth within the Explanatory Celestial Sphere
 
 ![Earth within the Explanatory Celestial Sphere](https://github.com/RashmikaDushan/GalaNor-ExoSky/blob/documentation/Images/Picture4.png)
 
+Activity Diagram
+
+![Activity Diagram](https://github.com/RashmikaDushan/GalaNor-ExoSky/blob/documentation/Images/Screenshot%202024-10-06%20084618.png)
+
