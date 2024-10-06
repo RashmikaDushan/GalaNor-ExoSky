@@ -1,5 +1,9 @@
 import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
+import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"; // Import OrbitControls
 
 function App() {
   const mountRef = useRef(null);
@@ -7,42 +11,71 @@ function App() {
   useEffect(() => {
     // Scene
     const scene = new THREE.Scene();
-
-    // Camera (PerspectiveCamera)
     const camera = new THREE.PerspectiveCamera(
-      75, // Field of View
-      window.innerWidth / window.innerHeight, // Aspect Ratio
-      0.1, // Near clipping plane
-      1000 // Far clipping plane
+      75,
+      window.innerWidth / window.innerHeight,
+      1,
+      10000
     );
+    // camera----------------------------------------------------------------
     camera.position.z = 5;
 
     // Renderer
-    const renderer = new THREE.WebGLRenderer();
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     mountRef.current.appendChild(renderer.domElement);
 
-    // Cube (Geometry + Material)
-    const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshStandardMaterial({ color: "orange" });
-    const cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
+    // Set up Unreal Bloom Pass----------------------------------------------
+    const renderScene = new RenderPass(scene, camera);
+    const bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(window.innerWidth, window.innerHeight),
+      2.0, // Strength of the bloom effect
+      1.0, // Bloom radius
+      0.2 // Bloom threshold
+    );
 
-    // Light
-    const ambientLight = new THREE.AmbientLight(0x404040, 2); // Soft white light
-    scene.add(ambientLight);
+    const composer = new EffectComposer(renderer);
+    composer.addPass(renderScene);
+    composer.addPass(bloomPass);
 
-    const pointLight = new THREE.PointLight(0xffffff, 1);
-    pointLight.position.set(10, 10, 10);
-    scene.add(pointLight);
+    // Orbit Controls----------------------------------------------------
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.minZoom = 1;
+    controls.enableDamping = true; // Makes rotation smoother
+    controls.dampingFactor = 0.05;
+    controls.rotateSpeed = -0.25;
+
+    // Create stars using BufferGeometry and PointsMaterial
+    const starGeometry = new THREE.BufferGeometry();
+    const starMaterial = new THREE.PointsMaterial({
+      color: 0xffffff,
+      size: 0.2,
+      sizeAttenuation: true,
+    });
+
+    const starCount = 500;
+    const positionsRand = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount * 3; i += 3) {
+      positionsRand[i] = (Math.random() - 0.5) * 600; // x
+      positionsRand[i + 1] = (Math.random() - 0.5) * 600; // y
+      positionsRand[i + 2] = (Math.random() - 0.5) * 600; // z
+    }
+    console.log("Random array:", positionsRand);
+
+    starGeometry.setAttribute(
+      "position",
+      new THREE.BufferAttribute(positionsRand, 3)
+    );
+
+    const stars = new THREE.Points(starGeometry, starMaterial);
+    scene.add(stars);
 
     // Animation function
     function animate() {
       requestAnimationFrame(animate);
 
-      // Rotate the cube
-      cube.rotation.x += 0.01;
-      cube.rotation.y += 0.01;
+      controls.update();
+      composer.render();
 
       // Render the scene
       renderer.render(scene, camera);
