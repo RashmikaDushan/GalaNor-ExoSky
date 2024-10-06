@@ -12,7 +12,7 @@ CORS(app)
 CSV_FILE_PATH = './data/Planets.csv'
 exoplanets_table = None
 # Scale the distance
-distance_scaler = 10
+distance_scaler = 100
 
 
 # Function to read the csv
@@ -20,6 +20,7 @@ def read_csv():
     global exoplanets_table
     if os.path.exists(CSV_FILE_PATH):
         exoplanets_table = pd.read_csv(CSV_FILE_PATH)
+        print(exoplanets_table)
 
     
 # Read the csv  
@@ -72,15 +73,17 @@ def get_exo_stars(index,view_distance):
     # Convert to Pandas DataFrame
     results = results.to_pandas()
 
+    planet_data = exoplanets_table.iloc[index]
+
     # Get relevant columns
     ra = np.radians(results["ra"])  # Convert to radians
     dec = np.radians(results["dec"])  # Convert to radians
     distance_gspphot = results["distance_gspphot"]
 
     # Calculate x, y, z coordinates from ra dec distance_gspphot
-    x = distance_gspphot * np.cos(dec) * np.cos(ra) * distance_scaler
-    y = distance_gspphot * np.sin(dec) * distance_scaler
-    z = distance_gspphot * np.cos(dec) * np.sin(ra) * distance_scaler
+    x = distance_gspphot * np.cos(dec) * np.cos(ra) * distance_scaler - planet_data["x"]
+    y = distance_gspphot * np.sin(dec) * distance_scaler - planet_data["y"]
+    z = distance_gspphot * np.cos(dec) * np.sin(ra) * distance_scaler - planet_data["z"]
 
     # Drop the original columns
     results.drop(columns=["ra", "dec", "distance_gspphot"], inplace=True)
@@ -160,7 +163,7 @@ def load_csv():
             
             if exoplanets_table.empty:
                 print("CSV is empty or not found")
-                return "CSV is empty", 404
+                return "CSV is empty", 404  
             
             # Get relevant columns
             ra = np.radians(exoplanets_table["ra"])  # Convert to radians
@@ -171,17 +174,16 @@ def load_csv():
             x = sy_dist * np.cos(dec) * np.cos(ra) * distance_scaler
             y = sy_dist * np.sin(dec) * distance_scaler
             z = sy_dist * np.cos(dec) * np.sin(ra) * distance_scaler
-        
-            sliced_exoplanets_table = exoplanets_table.drop(columns=["ra", "dec", "sy_dist"], inplace=False)
+
 
             # Add new x, y, z columns to the DataFrame
-            sliced_exoplanets_table["x"] = x
-            sliced_exoplanets_table["y"] = y
-            sliced_exoplanets_table["z"] = z
+            exoplanets_table["x"] = x
+            exoplanets_table["y"] = y
+            exoplanets_table["z"] = z
 
-            print(sliced_exoplanets_table)
+            print(exoplanets_table)
 
-            return sliced_exoplanets_table.to_json()
+            return exoplanets_table.to_json()
 
         except KeyError as e:
             return f"Invalid request: Missing {e}", 400

@@ -47,7 +47,7 @@ function App() {
       }
     };
 
-    fetchStars("0", "70");
+    fetchStars("10", "60");
     fetchPlanets();
 
     // Scene setup

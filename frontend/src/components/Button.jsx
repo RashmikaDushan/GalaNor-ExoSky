@@ -3,7 +3,7 @@ import "../style/Button.css"; // Ensure to have Button styles here
 
 const Button = () => {
   const goToGoogle = () => {
-    window.location.href = "frontend/src/earthViewPage/earthview.html";
+    window.location.href = "/exoskyview";
   };
 
   return (
