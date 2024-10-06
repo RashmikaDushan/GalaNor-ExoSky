@@ -54,6 +54,26 @@ const MenuComponent = () => {
           <li><a className="head" href="#">Submenu3</a></li>
           <li><a className="head" href="#">Submenu4</a></li>
         </ul>
+
+        {/* Menu 2 */}
+        <li id="nav2" className="toggle accordion-toggle" onClick={() => handleAccordionToggle(2)}>
+          <span className="icon-plus"></span>
+          <a className={`menu-link ${activeAccordion === 2 ? 'active' : ''}`} href="#">Menu2</a>
+        </li>
+        <ul className={`menu-submenu accordion-content ${activeAccordion === 2 ? 'open' : ''}`}>
+          <li><a className="head" href="#">Submenu1</a></li>
+          <li><a className="head" href="#">Submenu2</a></li>
+        </ul>
+
+        {/* Menu 2 */}
+        <li id="nav2" className="toggle accordion-toggle" onClick={() => handleAccordionToggle(2)}>
+          <span className="icon-plus"></span>
+          <a className={`menu-link ${activeAccordion === 2 ? 'active' : ''}`} href="#">Menu2</a>
+        </li>
+        <ul className={`menu-submenu accordion-content ${activeAccordion === 2 ? 'open' : ''}`}>
+          <li><a className="head" href="#">Submenu1</a></li>
+          <li><a className="head" href="#">Submenu2</a></li>
+        </ul>
       </ul>
     </div>
   );
