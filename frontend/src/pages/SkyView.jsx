@@ -10,6 +10,7 @@ function App() {
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const [starsData, setStarsData] = useState(null);
+  const [planetsData, setPlanetsData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -28,7 +29,20 @@ function App() {
       }
     };
 
+    const fetchPlanets = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axios.get("http://127.0.0.1:5000/load_csv", {});
+        setPlanetsData(response.data);
+      } catch (error) {
+        console.error("Error fetching stars data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     fetchStars("10", "100");
+    fetchPlanets();
 
     // Scene setup
     const scene = new THREE.Scene();
@@ -127,6 +141,12 @@ function App() {
       sceneRef.current.add(stars);
     }
   }, [starsData]);
+
+  useEffect(() => {
+    if (planetsData && sceneRef.current) {
+      console.log("Planets data:", planetsData);
+    }
+  }, [planetsData]);
 
   return (
     <div style={{ position: "relative" }}>
