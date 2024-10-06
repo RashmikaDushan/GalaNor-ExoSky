@@ -27,6 +27,8 @@ function App() {
         const response = await axios.get("http://127.0.0.1:5000/exoview", {
           params: params,
         });
+        camera.current.far = view_distance * 100;
+        camera.current.updateProjectionMatrix();
         setStarsData(response.data);
       } catch (error) {
         console.error("Error fetching stars data:", error);

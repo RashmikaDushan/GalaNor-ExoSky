@@ -20,6 +20,22 @@ def read_csv():
     global exoplanets_table
     if os.path.exists(CSV_FILE_PATH):
         exoplanets_table = pd.read_csv(CSV_FILE_PATH)
+        # Get relevant columns
+        ra = np.radians(exoplanets_table["ra"])  # Convert to radians
+        dec = np.radians(exoplanets_table["dec"])  # Convert to radians
+        sy_dist = exoplanets_table["sy_dist"]
+
+        # Calculate x, y, z coordinates from ra dec distance_gspphot
+        x = sy_dist * np.cos(dec) * np.cos(ra) * distance_scaler
+        y = sy_dist * np.sin(dec) * distance_scaler
+        z = sy_dist * np.cos(dec) * np.sin(ra) * distance_scaler
+
+
+        # Add new x, y, z columns to the DataFrame
+        exoplanets_table["x"] = x
+        exoplanets_table["y"] = y
+        exoplanets_table["z"] = z
+        
         print(exoplanets_table)
 
     
@@ -164,24 +180,6 @@ def load_csv():
             if exoplanets_table.empty:
                 print("CSV is empty or not found")
                 return "CSV is empty", 404  
-            
-            # Get relevant columns
-            ra = np.radians(exoplanets_table["ra"])  # Convert to radians
-            dec = np.radians(exoplanets_table["dec"])  # Convert to radians
-            sy_dist = exoplanets_table["sy_dist"]
-
-            # Calculate x, y, z coordinates from ra dec distance_gspphot
-            x = sy_dist * np.cos(dec) * np.cos(ra) * distance_scaler
-            y = sy_dist * np.sin(dec) * distance_scaler
-            z = sy_dist * np.cos(dec) * np.sin(ra) * distance_scaler
-
-
-            # Add new x, y, z columns to the DataFrame
-            exoplanets_table["x"] = x
-            exoplanets_table["y"] = y
-            exoplanets_table["z"] = z
-
-            print(exoplanets_table)
 
             return exoplanets_table.to_json()
 
