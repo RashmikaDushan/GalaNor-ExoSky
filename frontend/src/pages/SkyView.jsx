@@ -387,6 +387,37 @@ function App() {
           Toggle View
         </button>
       )}
+      <div
+        style={{
+          position: "absolute",
+          zIndex: 10,
+          bottom: "20px", // Adjust the position as needed
+          right: "20px", // Adjust the position as needed
+          maxHeight: "300px", // Set a max height for scrolling
+          overflowY: "auto", // Enable vertical scrolling
+          backgroundColor: "rgba(255, 255, 255, 0.1)", // Semi-transparent background
+          border: "2px solid white",
+          borderRadius: "8px",
+          padding: "10px",
+          boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <ul style={{ padding: "5px 0", cursor: "pointer", color: "white" }}>
+          {planetsData && planetsData.pl_name && (
+            <ul>
+              {Object.keys(planetsData.pl_name).map((key) => (
+                <li
+                  key={key}
+                  onClick={() => onPlanetClick(planetsData.Index[key])}
+                >
+                  {planetsData.pl_name[key]}{" "}
+                  {/* Access the planet name using the key */}
+                </li>
+              ))}
+            </ul>
+          )}
+        </ul>
+      </div>
       <div ref={mountRef} />
       {isStarssLoading && (
         <div
