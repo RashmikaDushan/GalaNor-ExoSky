@@ -4,41 +4,40 @@ import audioFile from '../assets/sidebar-audio.mp3'; // Adjust the path as neede
 
 const Sidebar = ({ isVisible }) => {
   const [activeContent, setActiveContent] = useState('exoplanet');
+  const [sidebarWidth, setSidebarWidth] = useState(300); // Default width in pixels
   const audioRef = useRef(null);
   
-  // Fade duration in milliseconds
   const fadeDuration = 1000; // 1 second for fade-in/out
 
-  // Function to handle fade-in effect
+  // Functions to handle fade-in and fade-out
   const fadeIn = (audioElement) => {
-    let volume = 0; // Start at volume 0
-    audioElement.volume = volume; // Set initial volume
+    let volume = 0;
+    audioElement.volume = volume;
     audioElement.play();
 
     const fadeInterval = setInterval(() => {
       if (volume < 1) {
-        volume += 0.5; // Increase volume
-        audioElement.volume = Math.min(volume, 1); // Cap volume at 1
+        volume += 0.05;
+        audioElement.volume = Math.min(volume, 1);
       } else {
-        clearInterval(fadeInterval); // Clear interval when max volume is reached
+        clearInterval(fadeInterval);
       }
-    }, fadeDuration / 20); // 20 steps for the fade-in
+    }, fadeDuration / 20);
   };
 
-  // Function to handle fade-out effect
   const fadeOut = (audioElement) => {
-    let volume = audioElement.volume; // Start at current volume
+    let volume = audioElement.volume;
 
     const fadeInterval = setInterval(() => {
       if (volume > 0) {
-        volume -= 0.05; // Decrease volume
-        audioElement.volume = Math.max(volume, 0); // Cap volume at 0
+        volume -= 0.05;
+        audioElement.volume = Math.max(volume, 0);
       } else {
-        clearInterval(fadeInterval); // Clear interval when min volume is reached
-        audioElement.pause(); // Pause audio
-        audioElement.currentTime = 0; // Reset audio to start
+        clearInterval(fadeInterval);
+        audioElement.pause();
+        audioElement.currentTime = 0;
       }
-    }, fadeDuration / 20); // 20 steps for the fade-out
+    }, fadeDuration / 20);
   };
 
   // Effect to play/pause audio with fade in/out
@@ -106,8 +105,43 @@ const Sidebar = ({ isVisible }) => {
     }
   };
 
+  // Functions to handle drag
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
+
+  const handleMouseMove = (e) => {
+    const newWidth = e.clientX; // Use clientX for mouse
+    setSidebarWidth(newWidth > 100 ? newWidth : 100); // Minimum width of 100px
+  };
+
+  const handleMouseUp = () => {
+    document.removeEventListener('mousemove', handleMouseMove);
+    document.removeEventListener('mouseup', handleMouseUp);
+  };
+
+  const handleTouchStart = (e) => {
+    e.preventDefault();
+    document.addEventListener('touchmove', handleTouchMove);
+    document.addEventListener('touchend', handleTouchEnd);
+  };
+
+  const handleTouchMove = (e) => {
+    const touch = e.touches[0];
+    const newWidth = touch.clientX; // Use clientX for touch
+    setSidebarWidth(newWidth > 100 ? newWidth : 100); // Minimum width of 100px
+  };
+
+  const handleTouchEnd = () => {
+    document.removeEventListener('touchmove', handleTouchMove);
+    document.removeEventListener('touchend', handleTouchEnd);
+  };
+
   return (
-    <div className={`card ${isVisible ? 'visible' : 'hidden'}`}>
+    <div className={`card ${isVisible ? 'visible' : 'hidden'}`} style={{ width: sidebarWidth }}>
+      <div className="drag-handle" onMouseDown={handleMouseDown} onTouchStart={handleTouchStart} />
       <h1>Welcome to Title!</h1>
       <p>Project summary</p>
 

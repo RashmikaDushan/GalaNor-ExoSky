@@ -18,7 +18,13 @@
   flex-direction: column;
   justify-content: flex-start;
   transition: left 1s ease;
-  overflow: hidden; /* Prevent any scrolling */
+  overflow-y: auto; /* Enable vertical scrolling */
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
+
+/* Hide scrollbar for Chrome, Safari, and Opera */
+.card::-webkit-scrollbar {
+  display: none; /* Hide scrollbar */
 }
 
 .card.visible {
@@ -72,7 +78,6 @@ ul li button:hover {
   .card {
       width: 100vw; /* Full width for small screens */
       padding: 20px; /* Adjusted padding for small screens */
-      overflow: hidden; /* No scrollbars */
       height: 100vh; /* Full viewport height */
   }
 
