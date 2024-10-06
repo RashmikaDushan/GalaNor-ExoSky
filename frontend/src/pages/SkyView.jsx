@@ -9,12 +9,13 @@ import axios from "axios";
 function App() {
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
+  const cameraRef = useRef(null);
   const [starsData, setStarsData] = useState(null);
   const [planetsData, setPlanetsData] = useState(null);
   const [isStarsLoading, setStarsIsLoading] = useState(true);
   const [isPlanetsLoading, setPlanetsIsLoading] = useState(true);
   var index = 10;
-  var view_distance = 100;
+  var view_distance = 70;
 
   useEffect(() => {
     const fetchStars = async (index, view_distance) => {
@@ -57,6 +58,7 @@ function App() {
       10000
     );
     camera.position.z = 100;
+    cameraRef.current = camera;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -87,6 +89,15 @@ function App() {
   useEffect(() => {
     if (starsData && sceneRef.current) {
       console.log("Stars data:", starsData);
+
+      const camera = cameraRef.current;
+
+      camera.position.x = planetsData.x[index];
+      camera.position.y = planetsData.y[index];
+      camera.position.z = planetsData.z[index];
+      console.log(
+        `${camera.position.x}, ${camera.position.y}, ${camera.position.z}`
+      );
 
       // Remove existing stars
       const existingStars = sceneRef.current.children.find(

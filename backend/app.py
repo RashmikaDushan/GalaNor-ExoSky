@@ -47,7 +47,8 @@ def generate_query(index,view_distance):
             WHERE distance_gspphot < {far};
                 """
         else:
-            angle = np.arctan(view_distance/(sy_dist))
+            angle = (np.arctan(view_distance/(sy_dist))*180)/np.pi
+            print("Angle: ",angle)
             query = f"""
             SELECT ra,dec,distance_gspphot
             FROM gaiadr3.gaia_source
@@ -136,6 +137,7 @@ def submit():
             print("index: ",index)
             print("view_distance",view_distance)
             stars = get_exo_stars(index, view_distance)
+            print(stars)
             return stars.to_json()
         else:
             return f"Index {index} out of range", 400
@@ -179,7 +181,7 @@ def load_csv():
             sliced_exoplanets_table["y"] = y
             sliced_exoplanets_table["z"] = z
 
-            print(sliced_exoplanets_table)
+            # print(sliced_exoplanets_table)
 
             return sliced_exoplanets_table.to_json()
 
