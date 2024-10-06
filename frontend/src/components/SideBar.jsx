@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
-import '../style/SideBar.css'; // Ensure the path is correct for your project structure
-import audioFile from '../assets/sidebar-audio.mp3'; // Adjust the path as needed
+import React, { useState, useEffect, useRef } from "react";
+import "../style/SideBar.css"; // Ensure the path is correct for your project structure
+import audioFile from "../assets/sidebar-audio.mp3"; // Adjust the path as needed
 
 const Sidebar = ({ isVisible }) => {
-  const [activeContent, setActiveContent] = useState('exoplanet');
+  const [activeContent, setActiveContent] = useState("exoplanet");
   const [sidebarWidth, setSidebarWidth] = useState(300); // Default width in pixels
   const audioRef = useRef(null);
-  
+
   const fadeDuration = 1000; // 1 second for fade-in/out
 
   // Functions to handle fade-in and fade-out
@@ -55,49 +55,78 @@ const Sidebar = ({ isVisible }) => {
   // Function to render content based on the active section
   const renderContent = () => {
     switch (activeContent) {
-      case 'exoplanet':
+      case "exoplanet":
         return (
           <div>
-            <h2>What is an Exoplanet?</h2>
-            <p>
-              An exoplanet is a planet that is outside <b>our solar system.</b> 
-              Exoplanets are typically found orbiting a star other than our Sun. 
-              In the same way that our solar system contains eight planets, other stars 
-              can have many exoplanets in orbit around them.
-            </p>
+            <h2>🌌 What is an Exoplanet?</h2>
+            <p><strong>Definition:</strong> An exoplanet is a planet that orbits a star outside our solar system.</p>
+            <p><strong>Description:</strong> Exoplanets come in a wide variety of sizes, from gas giants larger than Jupiter to small, rocky worlds like Earth. They are of great interest in the search for potential habitable worlds beyond our solar system.</p>
+            <p><strong>Related links:</strong></p>
+            <ul>
+              <li><a href="https://exoplanetarchive.ipac.caltech.edu/">NASA Exoplanet Archive</a></li>
+              <li><a href="https://www.cosmos.esa.int/web/cheops">ESA's Cheops Mission</a></li>
+              <li><a href="https://exoplanetzoo.org/">CSA's Exoplanet Zoo</a></li>
+            </ul>
           </div>
         );
-      case 'discoveries':
+      case "nasa":
         return (
           <div>
-            <h2>Recent Discoveries</h2>
-            <p>
-              Several new exoplanets have been discovered recently, 
-              many of which reside in the habitable zone of their star, 
-              where conditions may be just right to support life. 
-              Astronomers use advanced techniques to detect these planets.
-            </p>
+            <h2>🔗 NASA Resources</h2>
+            <p><strong>Description:</strong> Explore cutting-edge resources from NASA to study exoplanets and celestial bodies.</p>
+            <ul>
+              <li><strong>NASA Exoplanet Archive:</strong> A comprehensive catalog of confirmed exoplanets with detailed information about their properties and host stars.</li>
+              <li><strong>Gaia DR3 Catalog:</strong> A precise three-dimensional database of about one billion stars in our galaxy and beyond.</li>
+              <li><strong>Deep Star Maps 2020:</strong> Example of a detailed sky map constructed from star catalogs.</li>
+            </ul>
           </div>
         );
-      case 'missions':
+      case "esa":
         return (
           <div>
-            <h2>Space Missions</h2>
-            <p>
-              Various space missions like NASA's Kepler and TESS have focused on 
-              discovering new exoplanets. These missions collect data that help scientists 
-              understand distant worlds better.
-            </p>
+            <h2>🔗 ESA Resources</h2>
+            <p><strong>Description:</strong> Discover European Space Agency tools and datasets for exoplanet research and space exploration.</p>
+            <ul>
+              <li><strong>Hack an Exoplanet:</strong> An educational activity allowing access to real-time satellite observation data from ESA's Cheops mission.</li>
+              <li><strong>Human and Robotic Exploration Data Archive:</strong> A collection of results from ESA-funded experiments across various scientific areas and space platforms.</li>
+            </ul>
           </div>
         );
-      case 'contact':
+      case "csa":
         return (
           <div>
-            <h2>Contact Us</h2>
-            <p>
-              If you have any questions or need more information, feel free to contact our 
-              team. We're excited to share more about the wonders of space!
-            </p>
+            <h2>🔗 CSA Resources</h2>
+            <p><strong>Description:</strong> Access Canadian Space Agency resources for astronomy and exoplanet studies.</p>
+            <ul>
+              <li><strong>Exoplanet Zoo:</strong> An exploration of famous exoplanets and their potential habitability.</li>
+              <li><strong>Canadian Astronomy Data Centre:</strong> A repository of the Government of Canada's astronomy open data.</li>
+              <li><strong>NIRISS Exoplanet Data:</strong> Example data used to detect potentially habitable exoplanets using the NIRISS instrument on the James Webb Space Telescope.</li>
+            </ul>
+          </div>
+        );
+      case "data":
+        return (
+          <div>
+            <h2>📊 Data & Catalogs</h2>
+            <p><strong>Description:</strong> Find comprehensive databases and catalogs for exoplanet and stellar research.</p>
+            <ul>
+              <li><strong>NASA Exoplanet Archive:</strong> Detailed catalog of confirmed exoplanets and their properties.</li>
+              <li><strong>Gaia DR3 Catalog:</strong> Extensive database of stars in and beyond our galaxy.</li>
+              <li><strong>Canadian Astronomy Data Centre:</strong> Repository of Canadian astronomy data.</li>
+              <li><strong>BRITE Constellation Mission Data:</strong> Open light curve data from the BRITE Constellation Mission.</li>
+            </ul>
+          </div>
+        );
+      case "tutorials":
+        return (
+          <div>
+            <h2>📚 Tutorials & Educational Activities</h2>
+            <p><strong>Description:</strong> Learn how to work with exoplanet data through hands-on tutorials and educational resources.</p>
+            <ul>
+              <li><strong>Hack an Exoplanet (ESA):</strong> Educational activity using real-time data from ESA's Cheops mission.</li>
+              <li><strong>James Webb Space Telescope Tutorial:</strong> Guide on how to download and utilize JWST data.</li>
+              <li><strong>BRITE Constellation Mission Tutorial:</strong> Instructions for using open light curve data, which can aid in exoplanet detection.</li>
+            </ul>
           </div>
         );
       default:
@@ -108,8 +137,8 @@ const Sidebar = ({ isVisible }) => {
   // Functions to handle drag
   const handleMouseDown = (e) => {
     e.preventDefault();
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
   };
 
   const handleMouseMove = (e) => {
@@ -118,14 +147,14 @@ const Sidebar = ({ isVisible }) => {
   };
 
   const handleMouseUp = () => {
-    document.removeEventListener('mousemove', handleMouseMove);
-    document.removeEventListener('mouseup', handleMouseUp);
+    document.removeEventListener("mousemove", handleMouseMove);
+    document.removeEventListener("mouseup", handleMouseUp);
   };
 
   const handleTouchStart = (e) => {
     e.preventDefault();
-    document.addEventListener('touchmove', handleTouchMove);
-    document.addEventListener('touchend', handleTouchEnd);
+    document.addEventListener("touchmove", handleTouchMove);
+    document.addEventListener("touchend", handleTouchEnd);
   };
 
   const handleTouchMove = (e) => {
@@ -135,27 +164,59 @@ const Sidebar = ({ isVisible }) => {
   };
 
   const handleTouchEnd = () => {
-    document.removeEventListener('touchmove', handleTouchMove);
-    document.removeEventListener('touchend', handleTouchEnd);
+    document.removeEventListener("touchmove", handleTouchMove);
+    document.removeEventListener("touchend", handleTouchEnd);
   };
 
   return (
-    <div className={`card ${isVisible ? 'visible' : 'hidden'}`} style={{ width: sidebarWidth }}>
-      <div className="drag-handle" onMouseDown={handleMouseDown} onTouchStart={handleTouchStart} />
-      <h1>Welcome to Title!</h1>
+    <div
+      className={`card ${isVisible ? "visible" : "hidden"}`}
+      style={{ width: sidebarWidth }}
+    >
+      <div
+        className="drag-handle"
+        onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
+      />
+      <h1>🎉 Welcome to Title!</h1>
       <p>Project summary</p>
 
-      <h2>Navigation</h2>
+      <h2>📚 Navigation</h2>
       <ul>
-        <li><button onClick={() => setActiveContent('exoplanet')}>What is an Exoplanet?</button></li>
-        <li><button onClick={() => setActiveContent('discoveries')}>Recent Discoveries</button></li>
-        <li><button onClick={() => setActiveContent('missions')}>Space Missions</button></li>
-        <li><button onClick={() => setActiveContent('contact')}>Contact Us</button></li>
+        <li>
+          <button onClick={() => setActiveContent("exoplanet")}>
+            What is an Exoplanet?
+          </button>
+        </li>
+        <li>
+          <button onClick={() => setActiveContent("nasa")}>
+            NASA Resources
+          </button>
+        </li>
+        <li>
+          <button onClick={() => setActiveContent("esa")}>
+            ESA Resources
+          </button>
+        </li>
+        <li>
+          <button onClick={() => setActiveContent("csa")}>
+            CSA Resources
+          </button>
+        </li>
+        <li>
+          <button onClick={() => setActiveContent("data")}>
+            Data & Catalogs
+          </button>
+        </li>
+        <li>
+          <button onClick={() => setActiveContent("tutorials")}>
+            Tutorials & Educational Activities
+          </button>
+
+        </li>
       </ul>
 
-      <div className="content">
-        {renderContent()}
-      </div>
+      <div className="content">{renderContent()}</div>
 
       <audio ref={audioRef} src={audioFile} loop />
     </div>
