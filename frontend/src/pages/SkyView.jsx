@@ -11,12 +11,15 @@ function App() {
   const sceneRef = useRef(null);
   const [starsData, setStarsData] = useState(null);
   const [planetsData, setPlanetsData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isStarsLoading, setStarsIsLoading] = useState(true);
+  const [isPlanetsLoading, setPlanetsIsLoading] = useState(true);
+  var index = 10;
+  var view_distance = 100;
 
   useEffect(() => {
     const fetchStars = async (index, view_distance) => {
       try {
-        setIsLoading(true);
+        setStarsIsLoading(true);
         const params = { index: index, view_distance: view_distance };
         const response = await axios.get("http://127.0.0.1:5000/exoview", {
           params: params,
@@ -25,23 +28,23 @@ function App() {
       } catch (error) {
         console.error("Error fetching stars data:", error);
       } finally {
-        setIsLoading(false);
+        setStarsIsLoading(false);
       }
     };
 
     const fetchPlanets = async () => {
       try {
-        setIsLoading(true);
+        setPlanetsIsLoading(true);
         const response = await axios.get("http://127.0.0.1:5000/load_csv", {});
         setPlanetsData(response.data);
       } catch (error) {
         console.error("Error fetching stars data:", error);
       } finally {
-        setIsLoading(false);
+        setPlanetsIsLoading(false);
       }
     };
 
-    fetchStars("10", "100");
+    fetchStars(index.toString(), view_distance.toString());
     fetchPlanets();
 
     // Scene setup
@@ -151,7 +154,7 @@ function App() {
   return (
     <div style={{ position: "relative" }}>
       <div ref={mountRef} />
-      {isLoading && (
+      {isStarsLoading && (
         <div
           style={{
             position: "absolute",
