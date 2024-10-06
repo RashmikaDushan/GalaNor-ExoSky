@@ -125,7 +125,7 @@ ul li button:hover {
 /* Styles for smaller screens (below 768px) */
 @media (max-width: 768px) {
   .card {
-    width: 100vw;
+    width: 65vw;
     padding: 20px;
     height: 100vh;
     border-radius: 0;
