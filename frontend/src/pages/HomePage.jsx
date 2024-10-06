@@ -41,7 +41,7 @@ const HomePage = () => {
       <OverlayTitle isVisible={isOverlayVisible} />
       <Sidebar isVisible={isSidebarVisible} />
       {isButtonVisible && ( // Conditionally render the button
-        <Button to="https://www.spaceappschallenge.org/" label={'Go to Sky View 🚀'}/>
+        <Button to="/exoskyview" label={'Sky View 🚀'}/>
       )}
     </div>
   );
