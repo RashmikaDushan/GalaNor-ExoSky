@@ -3,13 +3,13 @@
   width: 30vw;
   height: 100vh;
   background: rgba(255, 255, 255, 0.2);
-  border-radius: 0px;
+  border-radius: 10px;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  box-shadow: -2px 0px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: -4px 0px 15px rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.3);
   color: #ffffff;
-  padding: 20px 20px 40px 40px;
+  padding: 30px 30px 50px 50px;
   position: fixed;
   top: 0;
   left: -100vw;
@@ -17,31 +17,54 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  transition: left 1s ease;
+  transition: left 0.6s ease;
   overflow-y: auto; /* Enable vertical scrolling */
   scrollbar-width: none; /* Hide scrollbar for Firefox */
+  transition: transform 0.3s ease-in-out;
+  transform: translateX(0);
+  min-width: 250px; /* Added minimum width of xpx */
+  max-width: 500px;
 }
 
 /* Hide scrollbar for Chrome, Safari, and Opera */
 .card::-webkit-scrollbar {
-  display: none; /* Hide scrollbar */
+  display: none;
 }
 
 .card.visible {
   left: 0;
+  transform: translateX(0);
+}
+
+h1 {
+  font-family: "Roboto", sans-serif;
+  font-weight: 600;
+  font-size: 2em;
+  margin-bottom: 20px;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 h2 {
   font-family: "Roboto", sans-serif;
-  font-weight: 400;
+  font-weight: 500;
+  color: #ffffff;
+  margin-bottom: 10px;
+  font-size: 1.6em;
+  letter-spacing: 0.03em;
 }
 
 b {
-  color: aqua;
+  color: #00e6e6;
 }
 
 p {
   text-align: justify;
+  font-size: 1.1em;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 ul {
@@ -51,21 +74,26 @@ ul {
 }
 
 ul li {
-  margin: 15px 0;
+  margin: 20px 0;
 }
 
 ul li button {
   background: none;
   border: none;
-  color: aqua;
+  color: #00e6e6;
   cursor: pointer;
-  font-size: 1.2em;
+  font-size: 1.3em;
   text-align: left;
-  padding: 0;
+  padding: 10px;
+  transition: all 0.3s ease;
+  border-bottom: 2px solid transparent;
 }
 
 ul li button:hover {
-  text-decoration: underline;
+  text-decoration: none;
+  color: #ffffff;
+  border-bottom: 2px solid #00e6e6;
+  transform: translateX(5px);
 }
 
 .content {
@@ -73,23 +101,51 @@ ul li button:hover {
   padding-bottom: 50px;
 }
 
+.card:hover {
+  transform: scale(1.02);
+  box-shadow: -6px 0px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Drag handle styles for resizable sidebar */
+.drag-handle {
+  width: 8px;
+  cursor: ew-resize;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.3);
+  transition: background-color 0.3s ease;
+}
+
+.drag-handle:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
 /* Styles for smaller screens (below 768px) */
 @media (max-width: 768px) {
   .card {
-      width: 100vw; /* Full width for small screens */
-      padding: 20px; /* Adjusted padding for small screens */
-      height: 100vh; /* Full viewport height */
+    width: 100vw;
+    padding: 20px;
+    height: 100vh;
+    border-radius: 0;
+    min-width: 250px; /* Remove min-width on mobile for full width */
+    max-width: 350px;
   }
 
   ul li button {
-      font-size: 1em; /* Slightly smaller text size */
+    font-size: 1.1em;
   }
 
   h2 {
-      font-size: 1.5em; /* Smaller heading size for small screens */
+    font-size: 1.5em;
   }
 
   p {
-      font-size: 1em; /* Adjust paragraph font size */
+    font-size: 1em;
+  }
+
+  .drag-handle {
+    width: 12px;
   }
 }
