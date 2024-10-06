@@ -15,13 +15,14 @@ function App() {
   const mouse = new THREE.Vector2();
   const [starsData, setStarsData] = useState(null);
   const [planetsData, setPlanetsData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isPlanetsLoading, setIsPlanetsLoading] = useState(true);
+  const [isStarssLoading, setIsStarsLoading] = useState(true);
   const starGeometry = useRef();
 
   useEffect(() => {
     const fetchStars = async (index, view_distance) => {
       try {
-        setIsLoading(true);
+        setIsStarsLoading(true);
         const params = { index: index, view_distance: view_distance };
         const response = await axios.get("http://127.0.0.1:5000/exoview", {
           params: params,
@@ -30,23 +31,23 @@ function App() {
       } catch (error) {
         console.error("Error fetching stars data:", error);
       } finally {
-        setIsLoading(false);
+        setIsStarsLoading(false);
       }
     };
 
     const fetchPlanets = async () => {
       try {
-        setIsLoading(true);
+        setIsPlanetsLoading(true);
         const response = await axios.get("http://127.0.0.1:5000/load_csv", {});
         setPlanetsData(response.data);
       } catch (error) {
         console.error("Error fetching stars data:", error);
       } finally {
-        setIsLoading(false);
+        setIsPlanetsLoading(false);
       }
     };
 
-    fetchStars("10", "100");
+    fetchStars("0", "10");
     fetchPlanets();
 
     // Scene setup
@@ -308,7 +309,7 @@ function findClosestStar(mousePos) {
   return (
     <div style={{ position: "relative" }}>
       <div ref={mountRef} />
-      {isLoading && (
+      {isStarssLoading && (
         <div
           style={{
             position: "absolute",
