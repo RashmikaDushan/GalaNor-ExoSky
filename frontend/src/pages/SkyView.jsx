@@ -40,8 +40,8 @@ function App() {
     };
 
     // Example of calling fetchStars with specific arguments
-    // fetchStars("0", "50");
-    // console.log(starsData);
+    fetchStars("10", "75");
+    console.log(starsData);
     // fetchPlanets();
 
     // Scene
