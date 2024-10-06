@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sky Map</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <!-- Sky Map Button -->
+  <button id="start-btn">Load Sky Map</button>
+
+  <!-- Container for ThreeJS or CSV -->
+  <div id="threejs-container"></div>
+
+  <div id="hover-info"></div>
+
+  <div id="listContainer">
+    <ul id="planetList"></ul>
+  </div>
+
+  <div class="hamburger-menu">
+    <button class="menu-toggle">☰</button>
+    <div class="menu-content">
+      <ul>
+        <li><a href="#" id="action1">Action_1</a></li>
+        <li><a href="#" id="action2">Action 2</a></li>
+        <li><a href="#" id="action3">Action 3</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="search">
+    <input type="text" class="search__input" placeholder="Search...">
+    <div class="search__icon">
+      <ion-icon name="search"></ion-icon>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+
+</html>

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React from 'react';
 import { Link } from 'react-router-dom';
 import '../style/Button.css'; // Assuming there is a CSS file for styling the button
@@ -17,6 +18,20 @@ const Button = ({ label, to, external,  ...props }) => {
     <Link to={to} className={`button`} {...props}>
       {label}
     </Link>
+=======
+import React from "react";
+import "../style/Button.css"; // Ensure to have Button styles here
+
+const Button = () => {
+  const goToGoogle = () => {
+    window.location.href = "/exoskyview";
+  };
+
+  return (
+    <button onClick={goToGoogle} className="button">
+      🚀 Explore Google
+    </button>
+>>>>>>> origin/earthview
   );
 };
 
