@@ -21,6 +21,10 @@ function App() {
   const starGeometry = useRef();
   const [index, setIndex] = useState(5);
   var view_distance = 60;
+  const cubeCameraRef = useRef(null);
+  const [isPrintVisible, setPrintVisible] = useState(false);
+  const cubeRenderTarget = new THREE.WebGLCubeRenderTarget( 128, { generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter } );
+  
 
   useEffect(() => {
     const fetchStars = async (index, view_distance) => {
@@ -65,6 +69,7 @@ function App() {
       10000
     );
     camera.current.position.z = 0.1;
+    scene.add( cubeCameraRef );
 
     renderer.current = new THREE.WebGLRenderer({ antialias: true });
     renderer.current.setSize(window.innerWidth, window.innerHeight);
@@ -217,7 +222,7 @@ function App() {
 
     // Get the 3D world position of the mouse
     const mouseWorldPos = getMouseWorldPosition();
-    const closestStar = findClosestStar(mouseWorldPos);
+    // const closestStar = findClosestStar(mouseWorldPos);
 
     // Clear the existing planet list
     document.getElementById("planetList").innerHTML = "";
@@ -267,44 +272,44 @@ function App() {
     return mouseWorldPos; // Return the 3D world coordinates of the mouse
   }
 
-  function findClosestStar(mousePos) {
-    let closestStar = null;
-    let closestDistance = 5;
+  // function findClosestStar(mousePos) {
+  //   let closestStar = null;
+  //   let closestDistance = 5;
 
-    // Iterate over each star's position
-    const positions = starGeometry.current.attributes.position.array;
+  //   // Iterate over each star's position
+  //   const positions = starGeometry.current.attributes.position.array;
 
-    for (let i = 0; i < positions.length; i += 3) {
-      const starPosition = new THREE.Vector3(
-        positions[i],
-        positions[i + 1],
-        positions[i + 2]
-      );
+  //   for (let i = 0; i < positions.length; i += 3) {
+  //     const starPosition = new THREE.Vector3(
+  //       positions[i],
+  //       positions[i + 1],
+  //       positions[i + 2]
+  //     );
 
-      // Calculate the distance between the mouse's 3D world position and each star
-      const distance = mousePos.distanceTo(starPosition);
+  //     // Calculate the distance between the mouse's 3D world position and each star
+  //     const distance = mousePos.distanceTo(starPosition);
 
-      if (distance < closestDistance) {
-        closestDistance = distance;
-        closestStar = { index: i / 3, position: starPosition, distance };
-      }
-    }
+  //     if (distance < closestDistance) {
+  //       closestDistance = distance;
+  //       closestStar = { index: i / 3, position: starPosition, distance };
+  //     }
+  //   }
 
-    if (closestStar && closestStar.distance < 100) {
-      // distance threshold
-      selectedHoststar = data.hostname[closestStar.index]; // Get the hostname of the closest star
-      hostIndex = data.Index[closestStar.index];
+  //   if (closestStar && closestStar.distance < 100) {
+  //     // distance threshold
+  //     selectedHoststar = data.hostname[closestStar.index]; // Get the hostname of the closest star
+  //     hostIndex = data.Index[closestStar.index];
 
-      document.getElementById(
-        "hover-info"
-      ).innerText = `Hostname: ${selectedHoststar}`;
-      document.getElementById("hover-info").style.display = "block"; // Show the info
-      console.log(`Closest Star Hostname: ${selectedHoststar}`);
-    } else {
-      document.getElementById("hover-info").style.display = "none"; // Hide info if no star is close enough
-    }
-    return closestStar;
-  }
+  //     document.getElementById(
+  //       "hover-info"
+  //     ).innerText = `Hostname: ${selectedHoststar}`;
+  //     document.getElementById("hover-info").style.display = "block"; // Show the info
+  //     console.log(`Closest Star Hostname: ${selectedHoststar}`);
+  //   } else {
+  //     document.getElementById("hover-info").style.display = "none"; // Hide info if no star is close enough
+  //   }
+  //   return closestStar;
+  // }
 
   useEffect(() => {
     window.addEventListener("click", handleMouseClick);
@@ -315,6 +320,15 @@ function App() {
 
   const handleResetIndex = () => {
     setIndex(0); // Set the index to 0 when the button is clicked
+  };
+
+  function onPlanetClick(index) {
+    setIndex(index);
+    toggleButtonVisibility();
+  }
+
+  const toggleButtonVisibility = () => {
+    setPrintVisible(prev => !prev);
   };
 
   useEffect(() => {
@@ -344,6 +358,40 @@ function App() {
       createStars();
     } else {
       createPlanets();
+    }
+  };
+
+  const handlePrint = () => {
+    if (cubeCameraRef.current) {
+      const renderer = renderer.current;
+      const scene = sceneRef.current;
+      const camera = camera.current;
+
+      // Capture the scene
+      cubeCameraRef.current.update(renderer, scene);
+
+      // Get the render target's texture
+      const texture = cubeCameraRef.current.renderTarget.texture;
+
+      // Create a canvas to extract the texture
+      const width = 256; // Use the width of the cube camera
+      const height = 256; // Use the height of the cube camera
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const context = canvas.getContext('2d');
+      const imageData = new Uint8Array(width * height * 4);
+
+      // Read the pixels from the texture
+      renderer.readRenderTargetPixels(cubeCameraRef.current.renderTarget, 0, 0, width, height, imageData);
+
+      // Put the pixel data onto the canvas
+      const imageDataObj = new ImageData(new Uint8ClampedArray(imageData), width, height);
+      context.putImageData(imageDataObj, 0, 0);
+
+      // Open the canvas as an image in a new tab
+      const newTab = window.open();
+      newTab.document.body.appendChild(canvas);
     }
   };
 
@@ -387,6 +435,23 @@ function App() {
           Toggle View
         </button>
       )}
+      <button
+        style={{
+          position: "absolute",
+          zIndex: 10, // Ensure button floats on top
+          bottom: "20px", // Adjust the position as needed
+          left: "20px", // Adjust the position as needed
+          padding: "10px 20px",
+          backgroundColor: "#3498db",
+          color: "white",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+        }}
+        onClick={handlePrint}
+      >
+        Print
+      </button>
       <div
         style={{
           position: "absolute",
