@@ -1,4 +1,4 @@
-# BIFORST - Visualizing the Night Sky from Exoplanets
+# BIFROST - Visualizing the Night Sky from Exoplanets
 
 ## Challenge Overview
 What would the night sky look like from an exoplanet? Our project for EXOSKY! The Exosky challenge encourages us to create a webapp that visualizes the night sky as seen from any of the 5500+ exoplanets.
@@ -16,10 +16,12 @@ Initially, the website provides a view of an exoplanet from Earth, allowing user
 
 **Steps**
 
-1. *Go to Exosky home page and click on the start button*
+1. *Go to BIFROST home page and click on the Earth*
    - User interacts with the frontend.
+
+2. *Earth will zoom in and side tab will appear*
    
-2. *Request to load Earth’s view of exoplanets*
+2. *Then click on the "go to sky view" button and request to load Earth’s view of exoplanets*
    - Frontend requests the backend to load Earth's view of the exoplanets.
    - Backend responds with Earth’s exoplanet view data (coordinates, names, etc.).
 
