@@ -17,7 +17,10 @@ function App() {
   const [planetsData, setPlanetsData] = useState(null);
   const [isPlanetsLoading, setIsPlanetsLoading] = useState(true);
   const [isStarssLoading, setIsStarsLoading] = useState(true);
+  const [isStarsView, setIsStarsView] = useState(true);
   const starGeometry = useRef();
+  const [index, setIndex] = useState(5);
+  var view_distance = 60;
 
   useEffect(() => {
     const fetchStars = async (index, view_distance) => {
@@ -49,7 +52,7 @@ function App() {
       }
     };
 
-    fetchStars("10", "60");
+    fetchStars(index, view_distance);
     fetchPlanets();
 
     // Scene setup
@@ -92,117 +95,116 @@ function App() {
     };
   }, []);
 
+  const createStars = () => {
+    console.log("Stars data:", starsData);
+
+    // Remove existing stars
+    const existingStars = sceneRef.current.children.find(
+      (child) => child.type === "Points"
+    );
+    if (existingStars) {
+      sceneRef.current.remove(existingStars);
+    }
+
+    // Create new stars based on fetched data
+    starGeometry.current = new THREE.BufferGeometry();
+    const starMaterial = new THREE.PointsMaterial({
+      color: 0xffffff,
+      size: 0.5,
+      sizeAttenuation: true,
+    });
+
+    const xArray = Object.values(starsData.x);
+    const yArray = Object.values(starsData.y);
+    const zArray = Object.values(starsData.z);
+
+    console.log("xArray:", xArray);
+    console.log("yArray:", yArray);
+    console.log("zArray:", zArray);
+
+    const length = Math.min(xArray.length, yArray.length, zArray.length);
+
+    // Create a new Float32Array with the correct size
+    const positions = new Float32Array(length * 3);
+
+    console.log("Length:", length);
+
+    // Populate the Float32Array with x, y, z values
+    for (let i = 0; i < length; i++) {
+      positions[i * 3] = xArray[i] || 0; // Use 0 if value is undefined
+      positions[i * 3 + 1] = yArray[i] || 0; // Use 0 if value is undefined
+      positions[i * 3 + 2] = zArray[i] || 0; // Use 0 if value is undefined
+    }
+
+    console.log("Flattened array:", positions);
+    starGeometry.current.setAttribute(
+      "position",
+      new THREE.BufferAttribute(positions, 3)
+    );
+    const stars = new THREE.Points(starGeometry.current, starMaterial);
+    sceneRef.current.add(stars);
+  };
+
   useEffect(() => {
     if (starsData && sceneRef.current) {
       console.log("Stars data:", starsData);
-
-      // Remove existing stars
-      const existingStars = sceneRef.current.children.find(
-        (child) => child.type === "Points"
-      );
-      if (existingStars) {
-        sceneRef.current.remove(existingStars);
-      }
-
-      // Create new stars based on fetched data
-      starGeometry.current = new THREE.BufferGeometry();
-      const starMaterial = new THREE.PointsMaterial({
-        color: 0xffffff,
-        size: 0.5,
-        sizeAttenuation: true,
-      });
-
-      const xArray = Object.values(starsData.x);
-      const yArray = Object.values(starsData.y);
-      const zArray = Object.values(starsData.z);
-
-      console.log("xArray:", xArray);
-      console.log("yArray:", yArray);
-      console.log("zArray:", zArray);
-
-      const length = Math.min(xArray.length, yArray.length, zArray.length);
-
-      // Create a new Float32Array with the correct size
-      const positions = new Float32Array(length * 3);
-
-      console.log("Length:", length);
-
-      // Populate the Float32Array with x, y, z values
-      for (let i = 0; i < length; i++) {
-        positions[i * 3] = xArray[i] || 0; // Use 0 if value is undefined
-        positions[i * 3 + 1] = yArray[i] || 0; // Use 0 if value is undefined
-        positions[i * 3 + 2] = zArray[i] || 0; // Use 0 if value is undefined
-      }
-
-      //   const starCount = 500; // for debbuging
-      //   const positionsRand = new Float32Array(starCount * 3);
-      //   for (let i = 0; i < starCount * 3; i += 3) {
-      //     positionsRand[i] = (Math.random() - 0.5) * 600; // x
-      //     positionsRand[i + 1] = (Math.random() - 0.5) * 600; // y
-      //     positionsRand[i + 2] = (Math.random() - 0.5) * 600; // z
-      //   }
-      //   console.log("Random positions:", positionsRand);
-
-      console.log("Flattened array:", positions);
-      starGeometry.current.setAttribute(
-        "position",
-        new THREE.BufferAttribute(positions, 3)
-      );
-      const stars = new THREE.Points(starGeometry.current, starMaterial);
-      sceneRef.current.add(stars);
+      createStars();
     }
   }, [starsData]);
+
+  const createPlanets = () => {
+    // Remove existing planets
+    const existingPlanets = sceneRef.current.children.find(
+      (child) => child.type === "Points"
+    );
+    if (existingPlanets) {
+      sceneRef.current.remove(existingPlanets);
+    }
+
+    // Create new planets based on fetched data
+    starGeometry.current = new THREE.BufferGeometry();
+    const starMaterial = new THREE.PointsMaterial({
+      color: 0xffffff,
+      size: 0.5,
+      sizeAttenuation: true,
+    });
+
+    const xArray = Object.values(planetsData.x);
+    const yArray = Object.values(planetsData.y);
+    const zArray = Object.values(planetsData.z);
+
+    console.log("xArray:", xArray);
+    console.log("yArray:", yArray);
+    console.log("zArray:", zArray);
+
+    const length = Math.min(xArray.length, yArray.length, zArray.length);
+
+    // Create a new Float32Array with the correct size
+    const positions = new Float32Array(length * 3);
+
+    console.log("Length:", length);
+
+    // Populate the Float32Array with x, y, z values
+    for (let i = 0; i < length; i++) {
+      positions[i * 3] = xArray[i] || 0; // Use 0 if value is undefined
+      positions[i * 3 + 1] = yArray[i] || 0; // Use 0 if value is undefined
+      positions[i * 3 + 2] = zArray[i] || 0; // Use 0 if value is undefined
+    }
+
+    console.log("Flattened array:", positions);
+    starGeometry.current.setAttribute(
+      "position",
+      new THREE.BufferAttribute(positions, 3)
+    );
+    const stars = new THREE.Points(starGeometry.current, starMaterial);
+    sceneRef.current.add(stars);
+  };
 
   // Planets Data (Host Star Creation)
   useEffect(() => {
     if (planetsData && sceneRef.current) {
+      createPlanets();
       console.log("Stars data:", planetsData);
-
-      // Remove existing stars
-      const existingStars = sceneRef.current.children.find(
-        (child) => child.type === "Points"
-      );
-      if (existingStars) {
-        sceneRef.current.remove(existingStars);
-      }
-
-      // Create new stars based on fetched data
-      starGeometry.current = new THREE.BufferGeometry();
-      const starMaterial = new THREE.PointsMaterial({
-        color: 0xffffff,
-        size: 0.5,
-        sizeAttenuation: true,
-      });
-
-      const xArray = Object.values(planetsData.x);
-      const yArray = Object.values(planetsData.y);
-      const zArray = Object.values(planetsData.z);
-
-      console.log("xArray:", xArray);
-      console.log("yArray:", yArray);
-      console.log("zArray:", zArray);
-
-      const length = Math.min(xArray.length, yArray.length, zArray.length);
-
-      // Create a new Float32Array with the correct size
-      const positions = new Float32Array(length * 3);
-
-      console.log("Length:", length);
-
-      // Populate the Float32Array with x, y, z values
-      for (let i = 0; i < length; i++) {
-        positions[i * 3] = xArray[i] || 0; // Use 0 if value is undefined
-        positions[i * 3 + 1] = yArray[i] || 0; // Use 0 if value is undefined
-        positions[i * 3 + 2] = zArray[i] || 0; // Use 0 if value is undefined
-      }
-
-      console.log("Flattened array:", positions);
-      starGeometry.current.setAttribute(
-        "position",
-        new THREE.BufferAttribute(positions, 3)
-      );
-      const stars = new THREE.Points(starGeometry.current, starMaterial);
-      sceneRef.current.add(stars);
     }
   }, [planetsData]);
 
@@ -311,8 +313,80 @@ function App() {
     };
   }, [planetsData]);
 
+  const handleResetIndex = () => {
+    setIndex(0); // Set the index to 0 when the button is clicked
+  };
+
+  useEffect(() => {
+    const fetchStars = async (index, view_distance) => {
+      try {
+        setIsStarsLoading(true);
+        const params = { index: index, view_distance: view_distance };
+        const response = await axios.get("http://127.0.0.1:5000/exoview", {
+          params: params,
+        });
+        camera.current.far = view_distance * 100;
+        camera.current.updateProjectionMatrix();
+        setStarsData(response.data);
+      } catch (error) {
+        console.error("Error fetching stars data:", error);
+      } finally {
+        setIsStarsLoading(false);
+      }
+    };
+
+    fetchStars(index, view_distance);
+  }, [index, view_distance]);
+
+  const handleViewToggle = () => {
+    setIsStarsView(!isStarsView); // Set the index to 0 when the button is clicked
+    if (isStarsView) {
+      createStars();
+    } else {
+      createPlanets();
+    }
+  };
+
   return (
     <div style={{ position: "relative" }}>
+      {index !== 0 && (
+        <button
+          style={{
+            position: "absolute",
+            zIndex: 10, // Ensure button floats on top
+            top: "20px", // Adjust the position as needed
+            left: "20px", // Adjust the position as needed
+            padding: "10px 20px",
+            backgroundColor: "#3498db",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+          onClick={handleResetIndex}
+        >
+          Go to Earth View
+        </button>
+      )}
+      {index == 0 && (
+        <button
+          style={{
+            position: "absolute",
+            zIndex: 10, // Ensure button floats on top
+            top: "20px", // Adjust the position as needed
+            right: "20px", // Adjust the position as needed
+            padding: "10px 20px",
+            backgroundColor: "#3498db",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+          onClick={handleViewToggle}
+        >
+          Toggle View
+        </button>
+      )}
       <div ref={mountRef} />
       {isStarssLoading && (
         <div
