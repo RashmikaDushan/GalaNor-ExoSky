@@ -2,13 +2,13 @@
 .card {
   width: 30vw;
   height: 100vh;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 51, 0.6); /* Dark blue background */
   border-radius: 10px;
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
-  box-shadow: -4px 0px 15px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: #ffffff;
+  box-shadow: -4px 0px 15px rgba(0, 0, 0, 0.3); /* Slightly darker shadow */
+  border: 1px solid rgba(0, 0, 51, 0.3); /* Dark blue border */
+  color: #ffffff; /* White text */
   padding: 30px 30px 50px 50px;
   position: fixed;
   top: 0;
@@ -41,7 +41,7 @@ h1 {
   font-weight: 600;
   font-size: 2em;
   margin-bottom: 20px;
-  color: #ffffff;
+  color: #00ccff; /* Light blue for headings */
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -49,14 +49,14 @@ h1 {
 h2 {
   font-family: "Roboto", sans-serif;
   font-weight: 500;
-  color: #ffffff;
+  color: #99ccff; /* Lighter blue for subheadings */
   margin-bottom: 10px;
   font-size: 1.6em;
   letter-spacing: 0.03em;
 }
 
 b {
-  color: #00e6e6;
+  color: #00b3b3; /* Teal color for bold text */
 }
 
 p {
@@ -80,7 +80,7 @@ ul li {
 ul li button {
   background: none;
   border: none;
-  color: #00e6e6;
+  color: #00e6e6; /* Teal color for buttons */
   cursor: pointer;
   font-size: 1.3em;
   text-align: left;
@@ -91,8 +91,8 @@ ul li button {
 
 ul li button:hover {
   text-decoration: none;
-  color: #ffffff;
-  border-bottom: 2px solid #00e6e6;
+  color: #ffffff; /* White on hover */
+  border-bottom: 2px solid #00ccff; /* Light blue underline on hover */
   transform: translateX(5px);
 }
 
@@ -103,7 +103,7 @@ ul li button:hover {
 
 .card:hover {
   transform: scale(1.02);
-  box-shadow: -6px 0px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: -6px 0px 20px rgba(0, 0, 0, 0.4); /* Darker shadow on hover */
 }
 
 /* Drag handle styles for resizable sidebar */
@@ -114,12 +114,12 @@ ul li button:hover {
   top: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(0, 0, 51, 0.5); /* Dark blue */
   transition: background-color 0.3s ease;
 }
 
 .drag-handle:hover {
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(0, 0, 51, 0.7); /* Darker blue on hover */
 }
 
 /* Styles for smaller screens (below 768px) */
