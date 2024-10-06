@@ -63,16 +63,16 @@ function App() {
 
     // Set up Unreal Bloom Pass
     const renderScene = new RenderPass(scene, camera);
-    const bloomPass = new UnrealBloomPass(
-      new THREE.Vector2(window.innerWidth, window.innerHeight),
-      1.5, // Strength of the bloom effect (increase for more bloom)
-      1.0, // Bloom radius (adjust for softness)
-      0.001 // Bloom threshold (lower for more objects to bloom)
-    );
+    // const bloomPass = new UnrealBloomPass(
+    //   new THREE.Vector2(window.innerWidth, window.innerHeight),
+    //   1.5, // Strength of the bloom effect (increase for more bloom)
+    //   1.0, // Bloom radius (adjust for softness)
+    //   0.001 // Bloom threshold (lower for more objects to bloom)
+    // );
 
     const composer = new EffectComposer(renderer);
     composer.addPass(renderScene);
-    composer.addPass(bloomPass);
+    // composer.addPass(bloomPass);
 
     // Orbit Controls
     const controls = new OrbitControls(camera, renderer.domElement);
