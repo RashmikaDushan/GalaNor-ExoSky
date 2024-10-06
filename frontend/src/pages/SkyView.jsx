@@ -8,122 +8,168 @@ import axios from "axios";
 
 function App() {
   const mountRef = useRef(null);
-
-  // State for storing stars and planets data
+  const sceneRef = useRef(null);
   const [starsData, setStarsData] = useState(null);
-  const [planetsData, setPlanetsData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch stars data from the first endpoint
     const fetchStars = async (index, view_distance) => {
       try {
+        setIsLoading(true);
         const params = { index: index, view_distance: view_distance };
-
         const response = await axios.get("http://127.0.0.1:5000/exoview", {
           params: params,
         });
-
-        setStarsData(response.data); // Store stars data
+        setStarsData(response.data);
       } catch (error) {
         console.error("Error fetching stars data:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    // Fetch planets data from the second endpoint
-    const fetchPlanets = async () => {
-      try {
-        const response = await axios.get("http://127.0.0.1:5000/load_csv");
-        setPlanetsData(response.data); // Store planets data
-      } catch (error) {
-        console.error("Error fetching planets data:", error);
-      }
-    };
+    fetchStars("10", "100");
 
-    // Example of calling fetchStars with specific arguments
-    fetchStars("10", "75");
-    console.log(starsData);
-    // fetchPlanets();
-
-    // Scene
+    // Scene setup
     const scene = new THREE.Scene();
+    sceneRef.current = scene;
     const camera = new THREE.PerspectiveCamera(
       75,
       window.innerWidth / window.innerHeight,
       1,
       10000
     );
+    camera.position.z = 100;
 
-    // Camera settings
-    camera.position.z = 5;
-
-    // Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     mountRef.current.appendChild(renderer.domElement);
 
-    // Set up Unreal Bloom Pass
     const renderScene = new RenderPass(scene, camera);
-    // const bloomPass = new UnrealBloomPass(
-    //   new THREE.Vector2(window.innerWidth, window.innerHeight),
-    //   1.5, // Strength of the bloom effect (increase for more bloom)
-    //   1.0, // Bloom radius (adjust for softness)
-    //   0.001 // Bloom threshold (lower for more objects to bloom)
-    // );
-
     const composer = new EffectComposer(renderer);
     composer.addPass(renderScene);
-    // composer.addPass(bloomPass);
 
-    // Orbit Controls
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.minZoom = 1;
-    controls.enableDamping = true; // Makes rotation smoother
+    controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.rotateSpeed = -0.25;
 
-    // Create stars using BufferGeometry and PointsMaterial
-    const starGeometry = new THREE.BufferGeometry();
-    const starMaterial = new THREE.PointsMaterial({
-      color: 0xffffff,
-      size: 0.2,
-      sizeAttenuation: true,
-    });
-
-    const starCount = 5000;
-    const positionsRand = new Float32Array(starCount * 3);
-    for (let i = 0; i < starCount * 3; i += 3) {
-      positionsRand[i] = (Math.random() - 0.5) * 600; // x
-      positionsRand[i + 1] = (Math.random() - 0.5) * 600; // y
-      positionsRand[i + 2] = (Math.random() - 0.5) * 600; // z
-    }
-
-    starGeometry.setAttribute(
-      "position",
-      new THREE.BufferAttribute(positionsRand, 3)
-    );
-
-    const stars = new THREE.Points(starGeometry, starMaterial);
-    scene.add(stars);
-
-    // Animation function
     function animate() {
       requestAnimationFrame(animate);
-
       controls.update();
-      composer.render(); // Render with composer to apply bloom
-
-      // Remove direct renderer.render as composer handles rendering now
-      // renderer.render(scene, camera);
+      composer.render();
     }
     animate();
 
-    // Cleanup function
     return () => {
       mountRef.current.removeChild(renderer.domElement);
     };
   }, []);
 
-  return <div ref={mountRef} />;
+  useEffect(() => {
+    if (starsData && sceneRef.current) {
+      console.log("Stars data:", starsData);
+
+      // Remove existing stars
+      const existingStars = sceneRef.current.children.find(
+        (child) => child.type === "Points"
+      );
+      if (existingStars) {
+        sceneRef.current.remove(existingStars);
+      }
+
+      // Create new stars based on fetched data
+      const starGeometry = new THREE.BufferGeometry();
+      const starMaterial = new THREE.PointsMaterial({
+        color: 0xffffff,
+        size: 0.5,
+        sizeAttenuation: true,
+      });
+
+      const xArray = Object.values(starsData.x);
+      const yArray = Object.values(starsData.y);
+      const zArray = Object.values(starsData.z);
+
+      console.log("xArray:", xArray);
+      console.log("yArray:", yArray);
+      console.log("zArray:", zArray);
+
+      const length = Math.min(xArray.length, yArray.length, zArray.length);
+
+      // Create a new Float32Array with the correct size
+      const positions = new Float32Array(length * 3);
+
+      console.log("Length:", length);
+
+      // Populate the Float32Array with x, y, z values
+      for (let i = 0; i < length; i++) {
+        positions[i * 3] = xArray[i] || 0; // Use 0 if value is undefined
+        positions[i * 3 + 1] = yArray[i] || 0; // Use 0 if value is undefined
+        positions[i * 3 + 2] = zArray[i] || 0; // Use 0 if value is undefined
+      }
+
+      //   const starCount = 500; // for debbuging
+      //   const positionsRand = new Float32Array(starCount * 3);
+      //   for (let i = 0; i < starCount * 3; i += 3) {
+      //     positionsRand[i] = (Math.random() - 0.5) * 600; // x
+      //     positionsRand[i + 1] = (Math.random() - 0.5) * 600; // y
+      //     positionsRand[i + 2] = (Math.random() - 0.5) * 600; // z
+      //   }
+      //   console.log("Random positions:", positionsRand);
+
+      console.log("Flattened array:", positions);
+      starGeometry.setAttribute(
+        "position",
+        new THREE.BufferAttribute(positions, 3)
+      );
+      const stars = new THREE.Points(starGeometry, starMaterial);
+      sceneRef.current.add(stars);
+    }
+  }, [starsData]);
+
+  return (
+    <div style={{ position: "relative" }}>
+      <div ref={mountRef} />
+      {isLoading && (
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            color: "white",
+            padding: "20px",
+            borderRadius: "10px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <div
+            className="spinner"
+            style={{
+              border: "4px solid #f3f3f3",
+              borderTop: "4px solid #3498db",
+              borderRadius: "50%",
+              width: "40px",
+              height: "40px",
+              animation: "spin 1s linear infinite",
+            }}
+          ></div>
+          <p style={{ marginTop: "10px" }}>Fetching data...</p>
+        </div>
+      )}
+      <style>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
+    </div>
+  );
 }
 
 export default App;

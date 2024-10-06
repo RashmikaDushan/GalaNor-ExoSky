@@ -109,7 +109,8 @@ def submit():
         # Get index from query parameters
         # index = request.args.get('index', default=30, type=int)
         # view_distance = request.args.get('view_distance', default=100, type=int)
-        data = request.args  # Use request.get_json() to retrieve JSON data
+        data = request.args 
+        print("data type",type(data))
         index = data.get('index')
         view_distance = data.get('view_distance')
         # index = 0
