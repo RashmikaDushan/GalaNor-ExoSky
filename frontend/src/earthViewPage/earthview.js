@@ -7,12 +7,17 @@ import * as bootstrap from "bootstrap";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"; // Import OrbitControls
 
+let hoveredStar = null; // To track the hovered star
+let starsData = []; // To store star objects with host_star references
+
 //-----------------------------------------------------------------------
 
 // Get DOM elements
-const loadingScreen = document.getElementById("loading-screen");
-const startBtn = document.getElementById("start-btn");
+// const loadingScreen = document.getElementById("loading-screen");
+// const startBtn = document.getElementById("start-btn");
 const threejsContainer = document.getElementById("threejs-container");
+
+loadSkyMap();
 
 async function loadSkyMap() {
   try {
@@ -60,6 +65,11 @@ async function loadSkyMap() {
 // Function to create stars using the CSV data
 function createStars(data) {
   let raycaster, mouse;
+  // Store stars for raycasting
+  const stars = [];
+  // Variable to store the last highlighted star
+  let lastHighlightedStar = null;
+  let highlightRing = null; // Variable to store the highlight ring
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(
@@ -99,26 +109,164 @@ function createStars(data) {
   raycaster = new THREE.Raycaster();
   mouse = new THREE.Vector2();
 
-  // temporary cube
+  // Convert RA/DEC to Cartesian coordinates
+  function raDecToCartesian(ra, dec) {
+    const radius = 100; // Adjust the radius to fit the stars properly
+    const x = radius * Math.cos(dec) * Math.cos(ra);
+    const y = radius * Math.sin(dec);
+    const z = radius * Math.cos(dec) * Math.sin(ra);
+    return new THREE.Vector3(x, y, z);
+  }
+
+  // Iterate over the RA and DEC arrays and create stars based on calculated x, y, z values
+  data.ra.forEach((raValue, index) => {
+    const decValue = data.dec[index]; // Match corresponding DEC value
+    const hostStar = data.hostname[index]; // Get the host star name
+    const planets = data.pl_name[index]; // Get the planet names associated with this star
+
+    // Convert RA/DEC to Cartesian coordinates
+    const { x, y, z } = raDecToCartesian(raValue, decValue);
+
+    // Create the star using the calculated x, y, z coordinates
+    const star = new THREE.Mesh(
+      new THREE.SphereGeometry(1, 5, 3), // Higher resolution star geometry
+      new THREE.MeshBasicMaterial({ color: 0xffffff })
+    );
+
+    // Set the star's position in the scene using the calculated coordinates
+    star.position.set(x, y, z);
+
+    // Add the star to the scene
+    scene.add(star);
+
+    // Store the star along with its associated host star and planet info
+    starsData.push({ star, hostStar, planets });
+
+    stars.push(star);
+  });
+
+  // Find the closest star to the mouse hover position
+  function findClosestStar(mousePos) {
+    let closestStar = null;
+    let closestDistance = 1;
+
+    data.ra.forEach((raValue, index) => {
+      const decValue = data.dec[index];
+
+      // Convert RA/DEC to 3D coordinates
+      const starPosition = raDecToCartesian(raValue, decValue);
+
+      // Calculate the distance between the star and the mouse position
+      const distance = mousePos.distanceTo(starPosition);
+
+      // If it's the closest star, save it
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestStar = { index, distance };
+      }
+    });
+
+    return closestStar;
+  }
+
+  // temporary cube--------------------------------------------------
   const geometry = new THREE.BoxGeometry(1, 1, 1);
   const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
   const cube = new THREE.Mesh(geometry, material);
   scene.add(cube);
   cube.position.set(10, 0, 0);
 
-  // Iterate over the arrays and create stars
-  data.ra.forEach((raValue, index) => {
-    const decValue = data.dec[index]; // Match corresponding dec value
-    // const magnitude = data.magnitude ? data.magnitude[index] : 1; // Optional magnitude
+  // Function to search and highlight a star by name---------------------
+  function searchAndHighlightStarByName(starName) {
+    let found = false;
 
-    const star = new THREE.Mesh(
-      new THREE.SphereGeometry(1, 5, 3),
-      new THREE.MeshBasicMaterial({ color: 0xffffff })
-    );
-    star.position.set(raValue, decValue, 90); // Adjust this based on your 3D coordinates
-    scene.add(star);
-  });
+    data.hostname.forEach((hostname, i) => {
+      if (hostname.toLowerCase() === starName.toLowerCase()) {
+        found = true;
 
+        const star = stars[i];
+
+        // Reset previous star and ring if applicable
+        if (lastHighlightedStar) {
+          lastHighlightedStar.material.color.set(0xffffff); // Reset color
+          if (highlightRing) {
+            scene.remove(highlightRing); // Remove previous ring
+          }
+        }
+
+        // Change the star color to red
+        star.material.color.set(0xff0000); // Highlight in red
+
+        // Create and position the highlight ring around the star
+        createHighlightRing(star);
+        console.log(`Star ${starName} found.`);
+
+        lastHighlightedStar = star; // Store current star as last highlighted
+      }
+    });
+
+    if (!found) {
+      console.log(`Star ${starName} not found.`);
+    }
+  }
+
+  // Function to search and highlight a star by planet name
+  function searchAndHighlightStarByPlanetName(planetName) {
+    let found = false;
+
+    data.pl_name.forEach((plName, i) => {
+      if (plName.toLowerCase() === planetName.toLowerCase()) {
+        found = true;
+
+        const hostStarName = data.hostname[i];
+        const starIndex = data.hostname.indexOf(hostStarName);
+        const star = stars[starIndex];
+
+        // Reset previous star and ring if applicable
+        if (lastHighlightedStar) {
+          lastHighlightedStar.material.color.set(0xffffff); // Reset color
+          if (highlightRing) {
+            scene.remove(highlightRing); // Remove previous ring
+          }
+        }
+
+        // Change the star color to red
+        star.material.color.set(0xff0000); // Highlight in red
+
+        // Create and position the highlight ring around the star
+        createHighlightRing(star);
+        console.log(`Star ${planetName} found.`);
+
+        lastHighlightedStar = star; // Store current star as last highlighted
+      }
+    });
+
+    if (!found) {
+      console.log(`Planet ${planetName} not found.`);
+    }
+  }
+
+  // Function to create a highlight ring around the star
+  function createHighlightRing(star) {
+    const ringGeometry = new THREE.RingGeometry(2, 3, 32); // Adjust ring size
+    const ringMaterial = new THREE.MeshBasicMaterial({
+      color: 0xffd700, // Golden color
+      side: THREE.DoubleSide,
+    });
+
+    highlightRing = new THREE.Mesh(ringGeometry, ringMaterial);
+
+    // Position the ring at the same coordinates as the star
+    highlightRing.position.copy(star.position);
+
+    // Make the ring face the camera
+    highlightRing.lookAt(camera.position);
+
+    // Add the ring to the scene
+    scene.add(highlightRing);
+  }
+
+  //-------------------------------------------------------------------
   // Event Listener for Mouse Clicks
   window.addEventListener("click", onMouseClick, false);
 
@@ -131,46 +279,16 @@ function createStars(data) {
     renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
-  function onMouseClick(event) {
-    // Convert screen coordinates to normalized device coordinates (-1 to +1)
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-    // Update the raycaster with the camera and mouse position
+  // Function to get the current mouse hover position in the 3D world
+  function getMouseWorldPosition() {
+    // Set the ray from the camera through the mouse
     raycaster.setFromCamera(mouse, camera);
 
-    // If you want to detect intersection with objects in the scene
-    const intersects = raycaster.intersectObjects(scene.children);
+    // Calculate the point where the ray intersects a sphere at radius 100
+    const point = raycaster.ray.origin
+      .clone()
+      .add(raycaster.ray.direction.clone().multiplyScalar(100));
 
-    if (intersects.length > 0) {
-      const intersect = intersects[0];
-      console.log("3D World Position:", intersect.point); // 3D world coordinates
-    } else {
-      // If no object is intersected, you can use the ray to find where it hits the scene
-      const point = raycaster.ray.origin
-        .clone()
-        .add(raycaster.ray.direction.clone().multiplyScalar(50));
-      console.log("Empty space, 3D World Position:", point);
-    }
+    return point; // Return the 3D world coordinates of the mouse
   }
-
-  function animate() {
-    requestAnimationFrame(animate);
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.01;
-    renderer.render(scene, camera);
-    controls.update();
-  }
-
-  animate();
 }
-
-// // Update the progress bar based on server response
-// function updateProgressBar(chunk) {
-//   const progressBar = document.getElementById("progress-bar");
-//   if (chunk.includes("Loading CSV file")) {
-//     progressBar.style.width = "50%"; // Halfway through when loading starts
-//   } else if (chunk.includes("CSV file loaded successfully")) {
-//     progressBar.style.width = "100%"; // Done loading
-//   }
-// }
