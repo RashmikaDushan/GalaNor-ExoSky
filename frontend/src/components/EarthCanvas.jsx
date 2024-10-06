@@ -28,10 +28,10 @@ const EarthCanvas = ({ toggleSidebar, handleZoom }) => {
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-      scene.add(ambientLight);
+      // const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+      // scene.add(ambientLight);
 
-      const pointLight = new THREE.PointLight(0xffffff, 1);
+      const pointLight = new THREE.PointLight(0xffffff, 100);
       pointLight.position.set(5, 3, 5);
       scene.add(pointLight);
 
@@ -59,7 +59,7 @@ const EarthCanvas = ({ toggleSidebar, handleZoom }) => {
 
     const animate = () => {
       if (earthMeshRef.current && rendererRef.current && sceneRef.current && cameraRef.current) {
-        earthMeshRef.current.rotation.y += 0.002;
+        earthMeshRef.current.rotation.y += 0.0002;
         rendererRef.current.render(sceneRef.current, cameraRef.current);
       }
       requestAnimationFrame(animate);
