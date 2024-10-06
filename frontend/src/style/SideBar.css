@@ -1,6 +1,6 @@
 /* Default (For screens larger than 768px) */
 .card {
-  width: 30vw;
+  width: 35vw;
   height: 100vh;
   background: rgba(0, 0, 51, 0.6); /* Dark blue background */
   border-radius: 10px;
