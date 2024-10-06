@@ -3,7 +3,7 @@ import "../style/SideBar.css"; // Ensure the path is correct for your project st
 import audioFile from "../assets/sidebar-audio.mp3"; // Adjust the path as needed
 
 const Sidebar = ({ isVisible }) => {
-  const [activeContent, setActiveContent] = useState("exoplanet");
+  const [activeTopic, setActiveTopic] = useState(null); // Track the currently selected topic
   const [sidebarWidth, setSidebarWidth] = useState(300); // Default width in pixels
   const audioRef = useRef(null);
 
@@ -52,12 +52,14 @@ const Sidebar = ({ isVisible }) => {
     }
   }, [isVisible]);
 
-  // Function to render content based on the active section
-  const renderContent = () => {
-    switch (activeContent) {
+  // Function to render content for the currently selected topic
+  const renderContent = (topic) => {
+    if (activeTopic !== topic) return null; // Only render if the topic is active
+
+    switch (topic) {
       case "exoplanet":
         return (
-          <div>
+          <div className="content">
             <h2>🌌 What is an Exoplanet?</h2>
             <p><strong>Definition:</strong> An exoplanet is a planet that orbits a star outside our solar system.</p>
             <p><strong>Description:</strong> Exoplanets come in a wide variety of sizes, from gas giants larger than Jupiter to small, rocky worlds like Earth. They are of great interest in the search for potential habitable worlds beyond our solar system.</p>
@@ -71,7 +73,7 @@ const Sidebar = ({ isVisible }) => {
         );
       case "nasa":
         return (
-          <div>
+          <div className="content">
             <h2>🔗 NASA Resources</h2>
             <p><strong>Description:</strong> Explore cutting-edge resources from NASA to study exoplanets and celestial bodies.</p>
             <ul>
@@ -83,7 +85,7 @@ const Sidebar = ({ isVisible }) => {
         );
       case "esa":
         return (
-          <div>
+          <div className="content">
             <h2>🔗 ESA Resources</h2>
             <p><strong>Description:</strong> Discover European Space Agency tools and datasets for exoplanet research and space exploration.</p>
             <ul>
@@ -94,7 +96,7 @@ const Sidebar = ({ isVisible }) => {
         );
       case "csa":
         return (
-          <div>
+          <div className="content">
             <h2>🔗 CSA Resources</h2>
             <p><strong>Description:</strong> Access Canadian Space Agency resources for astronomy and exoplanet studies.</p>
             <ul>
@@ -106,7 +108,7 @@ const Sidebar = ({ isVisible }) => {
         );
       case "data":
         return (
-          <div>
+          <div className="content">
             <h2>📊 Data & Catalogs</h2>
             <p><strong>Description:</strong> Find comprehensive databases and catalogs for exoplanet and stellar research.</p>
             <ul>
@@ -119,7 +121,7 @@ const Sidebar = ({ isVisible }) => {
         );
       case "tutorials":
         return (
-          <div>
+          <div className="content">
             <h2>📚 Tutorials & Educational Activities</h2>
             <p><strong>Description:</strong> Learn how to work with exoplanet data through hands-on tutorials and educational resources.</p>
             <ul>
@@ -132,6 +134,11 @@ const Sidebar = ({ isVisible }) => {
       default:
         return null;
     }
+  };
+
+  // Handle click to toggle topics
+  const handleTopicClick = (topic) => {
+    setActiveTopic((prevTopic) => (prevTopic === topic ? null : topic)); // Toggle the active topic
   };
 
   // Functions to handle drag
@@ -183,39 +190,42 @@ const Sidebar = ({ isVisible }) => {
       <h2>📚 Navigation</h2>
       <ul>
         <li>
-          <button onClick={() => setActiveContent("exoplanet")}>
+          <button onClick={() => handleTopicClick("exoplanet")}>
             What is an Exoplanet?
           </button>
+          {renderContent("exoplanet")}
         </li>
         <li>
-          <button onClick={() => setActiveContent("nasa")}>
+          <button onClick={() => handleTopicClick("nasa")}>
             NASA Resources
           </button>
+          {renderContent("nasa")}
         </li>
         <li>
-          <button onClick={() => setActiveContent("esa")}>
+          <button onClick={() => handleTopicClick("esa")}>
             ESA Resources
           </button>
+          {renderContent("esa")}
         </li>
         <li>
-          <button onClick={() => setActiveContent("csa")}>
+          <button onClick={() => handleTopicClick("csa")}>
             CSA Resources
           </button>
+          {renderContent("csa")}
         </li>
         <li>
-          <button onClick={() => setActiveContent("data")}>
+          <button onClick={() => handleTopicClick("data")}>
             Data & Catalogs
           </button>
+          {renderContent("data")}
         </li>
         <li>
-          <button onClick={() => setActiveContent("tutorials")}>
+          <button onClick={() => handleTopicClick("tutorials")}>
             Tutorials & Educational Activities
           </button>
-
+          {renderContent("tutorials")}
         </li>
       </ul>
-
-      <div className="content">{renderContent()}</div>
 
       <audio ref={audioRef} src={audioFile} loop />
     </div>
