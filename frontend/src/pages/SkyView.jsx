@@ -53,7 +53,7 @@ function App() {
       1,
       10000
     );
-    camera.position.z = 100;
+    camera.position.z = 0.1;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -142,11 +142,59 @@ function App() {
     }
   }, [starsData]);
 
-  useEffect(() => {
+   // Planets Data (Host Star Creation)
+   useEffect(() => {
     if (planetsData && sceneRef.current) {
-      console.log("Planets data:", planetsData);
+      console.log("Stars data:", planetsData);
+
+      // Remove existing stars
+      const existingStars = sceneRef.current.children.find(
+        (child) => child.type === "Points"
+      );
+      if (existingStars) {
+        sceneRef.current.remove(existingStars);
+      }
+
+      // Create new stars based on fetched data
+      const starGeometry = new THREE.BufferGeometry();
+      const starMaterial = new THREE.PointsMaterial({
+        color: 0xffffff,
+        size: 0.5,
+        sizeAttenuation: true,
+      });
+
+      const xArray = Object.values(planetsData.x);
+      const yArray = Object.values(planetsData.y);
+      const zArray = Object.values(planetsData.z);
+
+      console.log("xArray:", xArray);
+      console.log("yArray:", yArray);
+      console.log("zArray:", zArray);
+
+      const length = Math.min(xArray.length, yArray.length, zArray.length);
+
+      // Create a new Float32Array with the correct size
+      const positions = new Float32Array(length * 3);
+
+      console.log("Length:", length);
+
+      // Populate the Float32Array with x, y, z values
+      for (let i = 0; i < length; i++) {
+        positions[i * 3] = xArray[i] || 0; // Use 0 if value is undefined
+        positions[i * 3 + 1] = yArray[i] || 0; // Use 0 if value is undefined
+        positions[i * 3 + 2] = zArray[i] || 0; // Use 0 if value is undefined
+      }
+
+      console.log("Flattened array:", positions);
+      starGeometry.setAttribute(
+        "position",
+        new THREE.BufferAttribute(positions, 3)
+      );
+      const stars = new THREE.Points(starGeometry, starMaterial);
+      sceneRef.current.add(stars);
     }
   }, [planetsData]);
+
 
   return (
     <div style={{ position: "relative" }}>
