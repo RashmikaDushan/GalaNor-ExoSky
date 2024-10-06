@@ -3,9 +3,55 @@ import '../style/SideBar.css'; // Ensure the path is correct for your project st
 import audioFile from '../assets/sidebar-audio.mp3'; // Adjust the path as needed
 
 const Sidebar = ({ isVisible }) => {
-  // State to track which content is active
   const [activeContent, setActiveContent] = useState('exoplanet');
   const audioRef = useRef(null);
+  
+  // Fade duration in milliseconds
+  const fadeDuration = 1000; // 1 second for fade-in/out
+
+  // Function to handle fade-in effect
+  const fadeIn = (audioElement) => {
+    let volume = 0; // Start at volume 0
+    audioElement.volume = volume; // Set initial volume
+    audioElement.play();
+
+    const fadeInterval = setInterval(() => {
+      if (volume < 1) {
+        volume += 0.5; // Increase volume
+        audioElement.volume = Math.min(volume, 1); // Cap volume at 1
+      } else {
+        clearInterval(fadeInterval); // Clear interval when max volume is reached
+      }
+    }, fadeDuration / 20); // 20 steps for the fade-in
+  };
+
+  // Function to handle fade-out effect
+  const fadeOut = (audioElement) => {
+    let volume = audioElement.volume; // Start at current volume
+
+    const fadeInterval = setInterval(() => {
+      if (volume > 0) {
+        volume -= 0.05; // Decrease volume
+        audioElement.volume = Math.max(volume, 0); // Cap volume at 0
+      } else {
+        clearInterval(fadeInterval); // Clear interval when min volume is reached
+        audioElement.pause(); // Pause audio
+        audioElement.currentTime = 0; // Reset audio to start
+      }
+    }, fadeDuration / 20); // 20 steps for the fade-out
+  };
+
+  // Effect to play/pause audio with fade in/out
+  useEffect(() => {
+    const audioElement = audioRef.current;
+    if (audioElement) {
+      if (isVisible) {
+        fadeIn(audioElement);
+      } else {
+        fadeOut(audioElement);
+      }
+    }
+  }, [isVisible]);
 
   // Function to render content based on the active section
   const renderContent = () => {
@@ -60,36 +106,23 @@ const Sidebar = ({ isVisible }) => {
     }
   };
 
-  // Effect to play/pause audio based on visibility
-  useEffect(() => {
-    if (isVisible && audioRef.current) {
-      audioRef.current.play();
-    } else if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0; // Reset audio to start
-    }
-  }, [isVisible]);
-
   return (
-    <div className={`card ${isVisible ? 'visible' : ''}`}>
+    <div className={`card ${isVisible ? 'visible' : 'hidden'}`}>
       <h1>Welcome to Title!</h1>
       <p>Project summary</p>
 
       <h2>Navigation</h2>
       <ul>
-        {/* Setting the active content based on the link clicked */}
         <li><button onClick={() => setActiveContent('exoplanet')}>What is an Exoplanet?</button></li>
         <li><button onClick={() => setActiveContent('discoveries')}>Recent Discoveries</button></li>
         <li><button onClick={() => setActiveContent('missions')}>Space Missions</button></li>
         <li><button onClick={() => setActiveContent('contact')}>Contact Us</button></li>
       </ul>
 
-      {/* Render content based on the active link */}
       <div className="content">
         {renderContent()}
       </div>
 
-      {/* Hidden audio element with loop attribute */}
       <audio ref={audioRef} src={audioFile} loop />
     </div>
   );
