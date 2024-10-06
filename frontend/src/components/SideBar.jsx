@@ -187,7 +187,6 @@ const Sidebar = ({ isVisible }) => {
       />
       <h1>Bifröst</h1>
 
-      <h2>📚 Navigation</h2>
       <ul>
         <li>
           <button onClick={() => handleTopicClick("exoplanet")}>
