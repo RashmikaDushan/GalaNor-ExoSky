@@ -11,6 +11,7 @@
     text-transform: uppercase;
     letter-spacing: 1px;
     cursor: pointer;
+    text-align: center;
     transition: background 0.3s, border-color 0.3s;
     width: 250px;
   }

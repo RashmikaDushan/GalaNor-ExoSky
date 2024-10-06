@@ -23,7 +23,7 @@ const HomePage = () => {
       <EarthCanvas toggleSidebar={toggleSidebar} handleZoom={handleZoom} />
       <OverlayTitle isVisible={isOverlayVisible} />
       <Sidebar isVisible={isSidebarVisible} />
-      <Button />
+      <Button to="https://www.spaceappschallenge.org/" label={'Go to Sky View 🚀'}/>
     </div>
   );
 };
