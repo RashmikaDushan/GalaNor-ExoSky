@@ -5,14 +5,15 @@ import { gsap } from 'gsap';
 const EarthCanvas = ({ 
   toggleSidebar, 
   handleZoom, 
-  earthTextureUrl = 'src/assets/earthmap1k.jpg', 
-  cloudTextureUrl = 'src/assets/earthCloud.png', // Added cloud texture prop
+  // earthTextureUrl = 'src/assets/earthmap1k.jpg', 
+  cloudTextureUrl = 'src/assets/earthCloud.png',
   galaxyTextureUrl = 'src/assets/galaxy.png',
+  earthTextureUrl = 'src/assets/2k_earth_daymap.jpg',
   lightIntensity = 100,
   initialCameraPositionZ = 10,
   rotationSpeed = 0.0002,
   zoomedCameraPositionZ = 2,
-  starCount = 10000,
+  starCount = 3000,
 }) => {
   const canvasRef = useRef(null);
   const sceneRef = useRef(null);
@@ -50,7 +51,13 @@ const EarthCanvas = ({
       // Create Earth
       const earthGeometry = new THREE.SphereGeometry(0.6, 32, 32);
       const earthTexture = new THREE.TextureLoader().load(earthTextureUrl);
-      const earthMaterial = new THREE.MeshPhongMaterial({ map: earthTexture, shininess: 0, specular: 0x000000 });
+      const earthMaterial = new THREE.MeshPhongMaterial({ 
+        map: earthTexture,        
+        roughness: 1,
+        metalness: 0,
+        shininess: 50,
+        specular: new THREE.Color('grey'), 
+        reflectivity: 1});
       const earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
       scene.add(earthMesh);
       earthMeshRef.current = earthMesh;
@@ -68,12 +75,12 @@ const EarthCanvas = ({
       cloudsMeshRef.current = cloudsMesh;
 
       // Create stars
-      const starGeometry = new THREE.SphereGeometry(0.05, 16, 16);
+      const starGeometry = new THREE.SphereGeometry(0.04, 16, 16);
       const starMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
 
       for (let i = 0; i < starCount; i++) {
         const starMesh = new THREE.Mesh(starGeometry, starMaterial);
-        const radius = 40; 
+        const radius = 200; 
         starMesh.position.set(
           (Math.random() - 0.5) * radius * 2,
           (Math.random() - 0.5) * radius * 2,
