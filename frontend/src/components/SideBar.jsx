@@ -178,8 +178,7 @@ const Sidebar = ({ isVisible }) => {
         onMouseDown={handleMouseDown}
         onTouchStart={handleTouchStart}
       />
-      <h1>🎉 Welcome to Title!</h1>
-      <p>Project summary</p>
+      <h1>Bifröst</h1>
 
       <h2>📚 Navigation</h2>
       <ul>
