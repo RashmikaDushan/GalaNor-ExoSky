@@ -1,4 +1,4 @@
-# EXOSKY - Visualizing the Night Sky from Exoplanets
+# BIFORST - Visualizing the Night Sky from Exoplanets
 
 ## Challenge Overview
 What would the night sky look like from an exoplanet? Our project for EXOSKY! The Exosky challenge encourages us to create a webapp that visualizes the night sky as seen from any of the 5500+ exoplanets.
@@ -101,11 +101,20 @@ The webapp enhances educational engagement by helping students understand astron
 Main three scenarios shall be considered by the backend when filtering the data to generate the star map as per the request comes from the frontend.
 
 **Scenario 01**
+
 Sky view from the Earth (Celestial Sphere of Earth)
 
+![Sky view from the Earth](https://github.com/RashmikaDushan/GalaNor-ExoSky/blob/documentation/Images/Picture2.png)
+
 **Scenario 02**
+
 Earth within the Explanatory Celestial Sphere
 
+![Earth within the Explanatory Celestial Sphere](https://github.com/RashmikaDushan/GalaNor-ExoSky/blob/documentation/Images/Picture3.png)
+
 **Scenario 03**
+
 Earth within the Explanatory Celestial Sphere
+
+![Earth within the Explanatory Celestial Sphere](https://github.com/RashmikaDushan/GalaNor-ExoSky/blob/documentation/Images/Picture4.png)
 
