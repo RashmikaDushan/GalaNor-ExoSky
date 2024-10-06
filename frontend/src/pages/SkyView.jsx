@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"; // Import OrbitControls
 
 function App() {
   const mountRef = useRef(null);
@@ -37,59 +38,44 @@ function App() {
     composer.addPass(renderScene);
     composer.addPass(bloomPass);
 
-    const geometry = new THREE.BufferGeometry();
+    // Orbit Controls----------------------------------------------------
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.minZoom = 1;
+    controls.enableDamping = true; // Makes rotation smoother
+    controls.dampingFactor = 0.05;
+    controls.rotateSpeed = -0.25;
 
-    // create a simple square shape. We duplicate the top left and bottom right
-    // vertices because each vertex needs to appear once per triangle.
-    const vertices = new Float32Array([
-      -1.0,
-      -1.0,
-      1.0, // v0
-      1.0,
-      -1.0,
-      1.0, // v1
-      1.0,
-      1.0,
-      1.0, // v2
+    // Create stars using BufferGeometry and PointsMaterial
+    const starGeometry = new THREE.BufferGeometry();
+    const starMaterial = new THREE.PointsMaterial({
+      color: 0xffffff,
+      size: 0.2,
+      sizeAttenuation: true,
+    });
 
-      1.0,
-      1.0,
-      1.0, // v3
-      -1.0,
-      1.0,
-      1.0, // v4
-      -1.0,
-      -1.0,
-      1.0, // v5
-    ]);
+    const starCount = 500;
+    const positionsRand = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount * 3; i += 3) {
+      positionsRand[i] = (Math.random() - 0.5) * 600; // x
+      positionsRand[i + 1] = (Math.random() - 0.5) * 600; // y
+      positionsRand[i + 2] = (Math.random() - 0.5) * 600; // z
+    }
+    console.log("Random array:", positionsRand);
 
-    // itemSize = 3 because there are 3 values (components) per vertex
-    geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
-    const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-    const mesh = new THREE.Mesh(geometry, material);
-    scene.add(mesh);
+    starGeometry.setAttribute(
+      "position",
+      new THREE.BufferAttribute(positionsRand, 3)
+    );
 
-    // Cube (Geometry + Material)
-    const cubegeometry = new THREE.BoxGeometry();
-    const cubematerial = new THREE.MeshStandardMaterial({ color: "orange" });
-    const cube = new THREE.Mesh(cubegeometry, cubematerial);
-    scene.add(cube);
-
-    // Light
-    const ambientLight = new THREE.AmbientLight(0x404040, 2); // Soft white light
-    scene.add(ambientLight);
-
-    const pointLight = new THREE.PointLight(0xffffff, 1);
-    pointLight.position.set(10, 10, 10);
-    scene.add(pointLight);
+    const stars = new THREE.Points(starGeometry, starMaterial);
+    scene.add(stars);
 
     // Animation function
     function animate() {
       requestAnimationFrame(animate);
 
-      // Rotate the cube
-      cube.rotation.x += 0.01;
-      cube.rotation.y += 0.01;
+      controls.update();
+      composer.render();
 
       // Render the scene
       renderer.render(scene, camera);
