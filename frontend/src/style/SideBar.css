@@ -1,67 +1,90 @@
+/* Default (For screens larger than 768px) */
 .card {
-    width: 30vw;
-    height: 100vh;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 0px;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: -2px 0px 10px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: #ffffff;
-    padding: 20px 20px 40px 40px; /* Increased bottom padding to 40px */
-    position: fixed;
-    top: 0;
-    left: -100vw;
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start; /* Aligned content to start from the top */
-    transition: left 1s ease;
-    overflow-y: auto; /* Added scroll in case content exceeds the sidebar height */
+  width: 30vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 0px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: -2px 0px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  padding: 20px 20px 40px 40px;
+  position: fixed;
+  top: 0;
+  left: -100vw;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  transition: left 1s ease;
+  overflow: hidden; /* Prevent any scrolling */
 }
 
 .card.visible {
-    left: 0;
+  left: 0;
 }
 
 h2 {
-    font-family: "Roboto", sans-serif;
-    font-weight: 400;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
 }
 
 b {
-    color: aqua;
+  color: aqua;
 }
 
 p {
-    text-align: justify;
+  text-align: justify;
 }
 
 ul {
-    list-style-type: none;
-    padding: 0;
-    margin-bottom: 20px; /* Added margin to create more space below the list */
+  list-style-type: none;
+  padding: 0;
+  margin-bottom: 20px;
 }
 
 ul li {
-    margin: 15px 0;
+  margin: 15px 0;
 }
 
 ul li button {
-    background: none;
-    border: none;
-    color: aqua;
-    cursor: pointer;
-    font-size: 1.2em;
-    text-align: left;
-    padding: 0;
+  background: none;
+  border: none;
+  color: aqua;
+  cursor: pointer;
+  font-size: 1.2em;
+  text-align: left;
+  padding: 0;
 }
 
 ul li button:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .content {
-    margin-top: 20px;
-    padding-bottom: 50px; /* Added padding-bottom to give more space at the bottom */
+  margin-top: 20px;
+  padding-bottom: 50px;
+}
+
+/* Styles for smaller screens (below 768px) */
+@media (max-width: 768px) {
+  .card {
+      width: 100vw; /* Full width for small screens */
+      padding: 20px; /* Adjusted padding for small screens */
+      overflow: hidden; /* No scrollbars */
+      height: 100vh; /* Full viewport height */
+  }
+
+  ul li button {
+      font-size: 1em; /* Slightly smaller text size */
+  }
+
+  h2 {
+      font-size: 1.5em; /* Smaller heading size for small screens */
+  }
+
+  p {
+      font-size: 1em; /* Adjust paragraph font size */
+  }
 }
