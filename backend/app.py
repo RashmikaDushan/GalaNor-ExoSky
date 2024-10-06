@@ -12,7 +12,7 @@ CORS(app)
 CSV_FILE_PATH = './data/Planets.csv'
 exoplanets_table = None
 # Scale the distance
-distance_scaler = 5
+distance_scaler = 10
 
 
 # Function to read the csv

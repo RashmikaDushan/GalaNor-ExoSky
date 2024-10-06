@@ -47,7 +47,7 @@ function App() {
       }
     };
 
-    fetchStars("0", "10");
+    fetchStars("0", "70");
     fetchPlanets();
 
     // Scene setup
@@ -69,7 +69,10 @@ function App() {
     const composer = new EffectComposer(renderer.current);
     composer.addPass(renderScene);
 
-    const controls = new OrbitControls(camera.current, renderer.current.domElement);
+    const controls = new OrbitControls(
+      camera.current,
+      renderer.current.domElement
+    );
     controls.minZoom = 1;
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
@@ -148,8 +151,8 @@ function App() {
     }
   }, [starsData]);
 
-   // Planets Data (Host Star Creation)
-   useEffect(() => {
+  // Planets Data (Host Star Creation)
+  useEffect(() => {
     if (planetsData && sceneRef.current) {
       console.log("Stars data:", planetsData);
 
@@ -215,88 +218,89 @@ function App() {
     // Clear the existing planet list
     document.getElementById("planetList").innerHTML = "";
 
-    if (closestStar && closestStar.distance < 100) { // Check if a star is clicked
-        const matchingPlanets = [];
-        const selectedHoststar = data.hostname[closestStar.index]; // Get hostname of the closest star
+    if (closestStar && closestStar.distance < 100) {
+      // Check if a star is clicked
+      const matchingPlanets = [];
+      const selectedHoststar = data.hostname[closestStar.index]; // Get hostname of the closest star
 
-        // Find all planets associated with the clicked host star
-        data.hostname.forEach((hostname, i) => {
-            if (hostname === selectedHoststar) {
-                matchingPlanets.push(data.pl_name[i]);
-                const newPlanet = document.createElement("li");
-                newPlanet.textContent = `Planet ${data.pl_name[i]}`;
-                newPlanet.addEventListener("click", () => {
-                    onPlanetClick(data.Index[i]); // Handle planet click
-                    console.log(`Planet Index: ${data.Index[i]}`);
-                });
-                document.getElementById("planetList").appendChild(newPlanet);
-            }
-        });
-
-        if (matchingPlanets.length > 0) {
-            document.getElementById("listContainer").style.display = "block"; // Show planet list
-            console.log(`Planets: ${matchingPlanets.join(", ")}`);
+      // Find all planets associated with the clicked host star
+      data.hostname.forEach((hostname, i) => {
+        if (hostname === selectedHoststar) {
+          matchingPlanets.push(data.pl_name[i]);
+          const newPlanet = document.createElement("li");
+          newPlanet.textContent = `Planet ${data.pl_name[i]}`;
+          newPlanet.addEventListener("click", () => {
+            onPlanetClick(data.Index[i]); // Handle planet click
+            console.log(`Planet Index: ${data.Index[i]}`);
+          });
+          document.getElementById("planetList").appendChild(newPlanet);
         }
+      });
+
+      if (matchingPlanets.length > 0) {
+        document.getElementById("listContainer").style.display = "block"; // Show planet list
+        console.log(`Planets: ${matchingPlanets.join(", ")}`);
+      }
     } else {
-        console.log("No star clicked");
-        document.getElementById("listContainer").style.display = "none"; // Hide planet list if no star clicked
-        document.getElementById("planetList").innerHTML = "";
+      console.log("No star clicked");
+      document.getElementById("listContainer").style.display = "none"; // Hide planet list if no star clicked
+      document.getElementById("planetList").innerHTML = "";
     }
   };
 
   function getMouseWorldPosition() {
     const mouseWorldPos = new THREE.Vector3();
-    
+
     // Set the ray from the camera through the mouse
     raycaster.setFromCamera(mouse, camera.current);
-    
+
     // Calculate the point where the ray intersects a sphere at radius 500
     raycaster.ray.origin.add(
-        raycaster.ray.direction.clone().multiplyScalar(500)
+      raycaster.ray.direction.clone().multiplyScalar(500)
     ); // 500 should be the same as the value in ra_dec_to_cartesian in app.py
     mouseWorldPos.copy(raycaster.ray.origin);
-    
+
     return mouseWorldPos; // Return the 3D world coordinates of the mouse
-}
+  }
 
-function findClosestStar(mousePos) {
-  let closestStar = null;
-  let closestDistance = 5;
+  function findClosestStar(mousePos) {
+    let closestStar = null;
+    let closestDistance = 5;
 
-  // Iterate over each star's position
-  const positions = starGeometry.current.attributes.position.array;
+    // Iterate over each star's position
+    const positions = starGeometry.current.attributes.position.array;
 
-  for (let i = 0; i < positions.length; i += 3) {
-    const starPosition = new THREE.Vector3(
-      positions[i],
-      positions[i + 1],
-      positions[i + 2]
-    );
+    for (let i = 0; i < positions.length; i += 3) {
+      const starPosition = new THREE.Vector3(
+        positions[i],
+        positions[i + 1],
+        positions[i + 2]
+      );
 
-    // Calculate the distance between the mouse's 3D world position and each star
-    const distance = mousePos.distanceTo(starPosition);
+      // Calculate the distance between the mouse's 3D world position and each star
+      const distance = mousePos.distanceTo(starPosition);
 
-    if (distance < closestDistance) {
-      closestDistance = distance;
-      closestStar = { index: i / 3, position: starPosition, distance };
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestStar = { index: i / 3, position: starPosition, distance };
+      }
     }
-  }
 
-  if (closestStar && closestStar.distance < 100) {
-    // distance threshold
-    selectedHoststar = data.hostname[closestStar.index]; // Get the hostname of the closest star
-    hostIndex = data.Index[closestStar.index];
+    if (closestStar && closestStar.distance < 100) {
+      // distance threshold
+      selectedHoststar = data.hostname[closestStar.index]; // Get the hostname of the closest star
+      hostIndex = data.Index[closestStar.index];
 
-    document.getElementById(
-      "hover-info"
-    ).innerText = `Hostname: ${selectedHoststar}`;
-    document.getElementById("hover-info").style.display = "block"; // Show the info
-    console.log(`Closest Star Hostname: ${selectedHoststar}`);
-  } else {
-    document.getElementById("hover-info").style.display = "none"; // Hide info if no star is close enough
+      document.getElementById(
+        "hover-info"
+      ).innerText = `Hostname: ${selectedHoststar}`;
+      document.getElementById("hover-info").style.display = "block"; // Show the info
+      console.log(`Closest Star Hostname: ${selectedHoststar}`);
+    } else {
+      document.getElementById("hover-info").style.display = "none"; // Hide info if no star is close enough
+    }
+    return closestStar;
   }
-  return closestStar;
-}
 
   useEffect(() => {
     window.addEventListener("click", handleMouseClick);
@@ -304,7 +308,6 @@ function findClosestStar(mousePos) {
       window.removeEventListener("click", handleMouseClick);
     };
   }, [planetsData]);
-
 
   return (
     <div style={{ position: "relative" }}>
