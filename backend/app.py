@@ -8,8 +8,9 @@ from astroquery.gaia import Gaia
 app = Flask(__name__)
 CORS(app)
 
+BASE_DIR = os.getcwd()
 # Path to your CSV file
-CSV_FILE_PATH = './data/Planets.csv'
+CSV_FILE_PATH = os.path.join(BASE_DIR,'data','planets.csv')
 exoplanets_table = None
 # Scale the distance
 distance_scaler = 100
