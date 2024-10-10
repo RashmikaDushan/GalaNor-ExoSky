@@ -6,7 +6,8 @@ import numpy as np
 from astroquery.gaia import Gaia
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": ["https://galanor-84221.web.app"]}})
+
 
 # Path to your CSV file
 CSV_FILE_PATH = './data/Planets.csv'
